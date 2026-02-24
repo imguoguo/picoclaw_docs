@@ -1,0 +1,204 @@
+---
+id: model-list
+title: Model Configuration (model_list)
+---
+
+# Model Configuration
+
+PicoClaw uses a **model-centric** configuration approach. Simply specify `vendor/model` format to add new providers — **zero code changes required!**
+
+This enables **multi-agent support** with flexible provider selection:
+
+- **Different agents, different providers**: Each agent can use its own LLM provider
+- **Model fallbacks**: Configure primary and fallback models for resilience
+- **Load balancing**: Distribute requests across multiple endpoints
+- **Centralized configuration**: Manage all providers in one place
+
+## Supported Vendors
+
+| Vendor | `model` Prefix | Default API Base | Protocol | API Key |
+| --- | --- | --- | --- | --- |
+| **OpenAI** | `openai/` | `https://api.openai.com/v1` | OpenAI | [Get Key](https://platform.openai.com) |
+| **Anthropic** | `anthropic/` | `https://api.anthropic.com/v1` | Anthropic | [Get Key](https://console.anthropic.com) |
+| **Zhipu AI (GLM)** | `zhipu/` | `https://open.bigmodel.cn/api/paas/v4` | OpenAI | [Get Key](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) |
+| **DeepSeek** | `deepseek/` | `https://api.deepseek.com/v1` | OpenAI | [Get Key](https://platform.deepseek.com) |
+| **Google Gemini** | `gemini/` | `https://generativelanguage.googleapis.com/v1beta` | OpenAI | [Get Key](https://aistudio.google.com/api-keys) |
+| **Groq** | `groq/` | `https://api.groq.com/openai/v1` | OpenAI | [Get Key](https://console.groq.com) |
+| **Moonshot** | `moonshot/` | `https://api.moonshot.cn/v1` | OpenAI | [Get Key](https://platform.moonshot.cn) |
+| **Qwen** | `qwen/` | `https://dashscope.aliyuncs.com/compatible-mode/v1` | OpenAI | [Get Key](https://dashscope.console.aliyun.com) |
+| **NVIDIA** | `nvidia/` | `https://integrate.api.nvidia.com/v1` | OpenAI | [Get Key](https://build.nvidia.com) |
+| **Ollama** | `ollama/` | `http://localhost:11434/v1` | OpenAI | Local (no key needed) |
+| **OpenRouter** | `openrouter/` | `https://openrouter.ai/api/v1` | OpenAI | [Get Key](https://openrouter.ai/keys) |
+| **VLLM** | `vllm/` | `http://localhost:8000/v1` | OpenAI | Local |
+| **Cerebras** | `cerebras/` | `https://api.cerebras.ai/v1` | OpenAI | [Get Key](https://cerebras.ai) |
+| **VolcEngine** | `volcengine/` | `https://ark.cn-beijing.volces.com/api/v3` | OpenAI | [Get Key](https://console.volcengine.com) |
+| **Antigravity** | `antigravity/` | Google Cloud | Custom | OAuth only |
+| **GitHub Copilot** | `github-copilot/` | `localhost:4321` | gRPC | — |
+
+## Basic Configuration
+
+```json
+{
+  "model_list": [
+    {
+      "model_name": "gpt-5.2",
+      "model": "openai/gpt-5.2",
+      "api_key": "sk-your-openai-key"
+    },
+    {
+      "model_name": "claude",
+      "model": "anthropic/claude-sonnet-4-6",
+      "api_key": "sk-ant-your-key"
+    },
+    {
+      "model_name": "glm",
+      "model": "zhipu/glm-4.7",
+      "api_key": "your-zhipu-key"
+    }
+  ],
+  "agents": {
+    "defaults": {
+      "model": "gpt-5.2"
+    }
+  }
+}
+```
+
+## Vendor Examples
+
+### OpenAI
+
+```json
+{
+  "model_name": "gpt-5.2",
+  "model": "openai/gpt-5.2",
+  "api_key": "sk-..."
+}
+```
+
+### Anthropic
+
+```json
+{
+  "model_name": "claude",
+  "model": "anthropic/claude-sonnet-4-6",
+  "api_key": "sk-ant-your-key"
+}
+```
+
+> Run `picoclaw auth login --provider anthropic` to paste your API token.
+
+### DeepSeek
+
+```json
+{
+  "model_name": "deepseek-chat",
+  "model": "deepseek/deepseek-chat",
+  "api_key": "sk-..."
+}
+```
+
+### Ollama (Local)
+
+```json
+{
+  "model_name": "llama3",
+  "model": "ollama/llama3"
+}
+```
+
+### Custom Proxy/API
+
+```json
+{
+  "model_name": "my-custom-model",
+  "model": "openai/custom-model",
+  "api_base": "https://my-proxy.com/v1",
+  "api_key": "sk-..."
+}
+```
+
+## Load Balancing
+
+Configure multiple endpoints for the same model name — PicoClaw will automatically round-robin between them:
+
+```json
+{
+  "model_list": [
+    {
+      "model_name": "gpt-5.2",
+      "model": "openai/gpt-5.2",
+      "api_base": "https://api1.example.com/v1",
+      "api_key": "sk-key1"
+    },
+    {
+      "model_name": "gpt-5.2",
+      "model": "openai/gpt-5.2",
+      "api_base": "https://api2.example.com/v1",
+      "api_key": "sk-key2"
+    }
+  ]
+}
+```
+
+## Migration from Legacy `providers`
+
+The old `providers` configuration is **deprecated** but still supported.
+
+**Old Config (deprecated):**
+
+```json
+{
+  "providers": {
+    "zhipu": {
+      "api_key": "your-key",
+      "api_base": "https://open.bigmodel.cn/api/paas/v4"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "provider": "zhipu",
+      "model": "glm-4.7"
+    }
+  }
+}
+```
+
+**New Config (recommended):**
+
+```json
+{
+  "model_list": [
+    {
+      "model_name": "glm-4.7",
+      "model": "zhipu/glm-4.7",
+      "api_key": "your-key"
+    }
+  ],
+  "agents": {
+    "defaults": {
+      "model": "glm-4.7"
+    }
+  }
+}
+```
+
+See the full [Migration Guide](../migration/model-list-migration) for details.
+
+## Voice Transcription
+
+:::note
+Groq provides **free voice transcription** via Whisper. If configured, Telegram voice messages will be automatically transcribed.
+:::
+
+```json
+{
+  "model_list": [
+    {
+      "model_name": "whisper",
+      "model": "groq/whisper-large-v3",
+      "api_key": "gsk_..."
+    }
+  ]
+}
+```

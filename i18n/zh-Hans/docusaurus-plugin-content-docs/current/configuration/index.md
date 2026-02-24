@@ -1,0 +1,58 @@
+---
+id: index
+title: 配置概览
+sidebar_label: 概览
+---
+
+# 配置
+
+配置文件：`~/.picoclaw/config.json`
+
+## 配置区域
+
+| 区域 | 用途 |
+| --- | --- |
+| `agents.defaults` | Agent 默认设置（模型、工作目录、限制） |
+| `model_list` | LLM 提供商定义 |
+| `channels` | 聊天应用接入 |
+| `tools` | 网络搜索、命令执行、定时任务、技能 |
+| `heartbeat` | 周期任务设置 |
+| `gateway` | HTTP 网关地址/端口 |
+
+## 工作目录结构
+
+PicoClaw 将数据存储在配置的工作目录中（默认：`~/.picoclaw/workspace`）：
+
+```
+~/.picoclaw/workspace/
+├── sessions/          # 对话会话和历史记录
+├── memory/            # 长期记忆 (MEMORY.md)
+├── state/             # 持久化状态（上次使用的通道等）
+├── cron/              # 定时任务数据库
+├── skills/            # 自定义技能
+├── AGENTS.md          # Agent 行为指南
+├── HEARTBEAT.md       # 周期任务提示（每 30 分钟检查）
+├── IDENTITY.md        # Agent 身份设定
+├── SOUL.md            # Agent 灵魂设定
+├── TOOLS.md           # 工具说明
+└── USER.md            # 用户偏好
+```
+
+## 环境变量
+
+大多数配置项可通过环境变量设置，格式为 `PICOCLAW_<区域>_<键>`（大写下划线）：
+
+```bash
+export PICOCLAW_AGENTS_DEFAULTS_MODEL=my-model
+export PICOCLAW_HEARTBEAT_ENABLED=false
+export PICOCLAW_HEARTBEAT_INTERVAL=60
+export PICOCLAW_AGENTS_DEFAULTS_RESTRICT_TO_WORKSPACE=false
+```
+
+## 快速链接
+
+- [**model_list 配置**](./model-list.md) — 添加 LLM 提供商
+- [**安全沙箱**](./security-sandbox.md) — 工作目录访问限制
+- [**心跳任务**](./heartbeat.md) — 周期性自动任务
+- [**工具配置**](./tools.md) — 网络搜索、命令执行、定时任务
+- [**完整配置参考**](./config-reference.md) — 带注释的完整示例
