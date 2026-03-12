@@ -45,7 +45,7 @@ title: 迁移指南：providers → model_list
   "agents": {
     "defaults": {
       "provider": "openai",
-      "model": "gpt-5.2"
+      "model": "gpt-5.4"
     }
   }
 }
@@ -58,7 +58,7 @@ title: 迁移指南：providers → model_list
   "model_list": [
     {
       "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-your-openai-key",
       "api_base": "https://api.openai.com/v1"
     },
@@ -87,7 +87,7 @@ title: 迁移指南：providers → model_list
 
 | 前缀 | 说明 | 示例 |
 | --- | --- | --- |
-| `openai/` | OpenAI API（默认） | `openai/gpt-5.2` |
+| `openai/` | OpenAI API（默认） | `openai/gpt-5.4` |
 | `anthropic/` | Anthropic API | `anthropic/claude-opus-4` |
 | `antigravity/` | Google Cloud（OAuth） | `antigravity/gemini-2.0-flash` |
 | `gemini/` | Google Gemini API | `gemini/gemini-2.0-flash-exp` |
@@ -111,7 +111,7 @@ title: 迁移指南：providers → model_list
 | 字段 | 必填 | 说明 |
 | --- | --- | --- |
 | `model_name` | 是 | 模型别名（在 `agents.defaults.model` 中引用） |
-| `model` | 是 | 协议前缀 + 模型标识符（如 `openai/gpt-5.2`） |
+| `model` | 是 | 协议前缀 + 模型标识符（如 `openai/gpt-5.4`） |
 | `api_base` | 否 | API 地址 URL |
 | `api_key` | 视情况* | API 认证 Key |
 | `proxy` | 否 | HTTP 代理地址 |
@@ -130,19 +130,19 @@ title: 迁移指南：providers → model_list
   "model_list": [
     {
       "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-key1",
       "api_base": "https://api1.example.com/v1"
     },
     {
       "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-key2",
       "api_base": "https://api2.example.com/v1"
     },
     {
       "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-key3",
       "api_base": "https://api3.example.com/v1"
     }

@@ -8,7 +8,7 @@ title: Getting Started
 Get PicoClaw running in 2 minutes.
 
 :::tip API Keys
-Get free API keys: [OpenRouter](https://openrouter.ai/keys) (200K tokens/month) · [Zhipu](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) (200K tokens/month)
+Set your API Key in `~/.picoclaw/config.json`. Get API Keys: [Volcengine (CodingPlan)](https://console.volcengine.com) (LLM) · [OpenRouter](https://openrouter.ai/keys) (LLM) · [Zhipu](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) (LLM). Web search is **optional** — get a free [Tavily API](https://tavily.com) (1000 free queries/month) or [Brave Search API](https://brave.com/search/api) (2000 free queries/month).
 :::
 
 ## Step 1: Initialize
@@ -28,19 +28,24 @@ Edit `~/.picoclaw/config.json`:
   "agents": {
     "defaults": {
       "workspace": "~/.picoclaw/workspace",
-      "model_name": "gpt4",
+      "model_name": "gpt-5.4",
       "max_tokens": 32768,
       "max_tool_iterations": 50
     }
   },
   "model_list": [
     {
-      "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
+      "model_name": "ark-code-latest",
+      "model": "volcengine/ark-code-latest",
+      "api_key": "sk-your-api-key"
+    },
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_key": "your-api-key"
     },
     {
-      "model_name": "claude",
+      "model_name": "claude-sonnet-4.6",
       "model": "anthropic/claude-sonnet-4-6",
       "api_key": "your-anthropic-key"
     }
@@ -166,7 +171,9 @@ Only one `picoclaw gateway` instance should run at a time. Stop any other instan
 | Service | Free Tier | Use Case |
 | --- | --- | --- |
 | **OpenRouter** | 200K tokens/month | Multiple models (Claude, GPT-4, etc.) |
-| **Zhipu** | 200K tokens/month | Best for Chinese users |
+| **Volcengine CodingPlan** | ¥9.9/first month | Best for Chinese users, multiple SOTA models (Doubao, DeepSeek, etc.) |
+| **Zhipu** | 200K tokens/month | For Chinese users |
 | **Brave Search** | 2000 queries/month | Web search functionality |
+| **Tavily** | 1000 queries/month | AI Agent optimized search |
 | **Groq** | Free tier | Fast inference (Llama, Mixtral) |
 | **Cerebras** | Free tier | Fast inference (Llama, Qwen) |

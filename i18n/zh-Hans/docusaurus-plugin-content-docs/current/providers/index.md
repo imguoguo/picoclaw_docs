@@ -27,7 +27,8 @@ PicoClaw 通过 `model_list` 配置支持 19+ 个 LLM 提供商。
 | **vLLM** | 本地 OpenAI 兼容服务 | 本地部署 |
 | **LiteLLM** | LiteLLM 代理 | 本地代理 |
 | **Cerebras** | 高速推理 | [cerebras.ai](https://cerebras.ai) |
-| **火山引擎** | 字节跳动模型 | [console.volcengine.com](https://console.volcengine.com) |
+| **火山引擎** | 豆包模型、CodingPlan | [console.volcengine.com](https://console.volcengine.com) |
+| **BytePlus** | CodingPlan（国际版） | [console.byteplus.com](https://console.byteplus.com) |
 | **Antigravity** | Google Cloud Code Assist | 仅 OAuth |
 | **Minimax** | MiniMax 系列模型 | [platform.minimaxi.com](https://platform.minimaxi.com) |
 | **GitHub Copilot** | Copilot 模型 | — |
@@ -39,7 +40,7 @@ PicoClaw 通过 `model_list` 配置支持 19+ 个 LLM 提供商。
   "model_list": [
     {
       "model_name": "my-model",
-      "model": "openai/gpt-5.2",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-..."
     }
   ],

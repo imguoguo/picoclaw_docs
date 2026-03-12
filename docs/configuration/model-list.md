@@ -32,8 +32,10 @@ This enables **multi-agent support** with flexible provider selection:
 | **VLLM** | `vllm/` | `http://localhost:8000/v1` | OpenAI | Local |
 | **Cerebras** | `cerebras/` | `https://api.cerebras.ai/v1` | OpenAI | [Get Key](https://cerebras.ai) |
 | **VolcEngine** | `volcengine/` | `https://ark.cn-beijing.volces.com/api/v3` | OpenAI | [Get Key](https://console.volcengine.com) |
+| **BytePlus** | `byteplus/` | `https://ark.ap-southeast.bytepluses.com/api/v3` | OpenAI | [Get Key](https://console.byteplus.com) |
 | **Mistral** | `mistral/` | `https://api.mistral.ai/v1` | OpenAI | [Get Key](https://console.mistral.ai) |
 | **LiteLLM** | `litellm/` | `http://localhost:4000/v1` | OpenAI | Local proxy |
+| **ShengSuanYun** | `shengsuanyun/` | `https://router.shengsuanyun.com/api/v1` | OpenAI | [Get Key](https://router.shengsuanyun.com) |
 | **Antigravity** | `antigravity/` | Google Cloud | Custom | OAuth only |
 | **GitHub Copilot** | `github-copilot/` | `localhost:4321` | gRPC | — |
 
@@ -43,24 +45,29 @@ This enables **multi-agent support** with flexible provider selection:
 {
   "model_list": [
     {
-      "model_name": "gpt-5.2",
-      "model": "openai/gpt-5.2",
+      "model_name": "ark-code-latest",
+      "model": "volcengine/ark-code-latest",
+      "api_key": "sk-your-api-key"
+    },
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-your-openai-key"
     },
     {
-      "model_name": "claude",
+      "model_name": "claude-sonnet-4.6",
       "model": "anthropic/claude-sonnet-4-6",
       "api_key": "sk-ant-your-key"
     },
     {
-      "model_name": "glm",
+      "model_name": "glm-4.7",
       "model": "zhipu/glm-4.7",
       "api_key": "your-zhipu-key"
     }
   ],
   "agents": {
     "defaults": {
-      "model_name": "gpt-5.2"
+      "model_name": "gpt-5.4"
     }
   }
 }
@@ -85,8 +92,18 @@ This enables **multi-agent support** with flexible provider selection:
 
 ```json
 {
-  "model_name": "gpt-5.2",
-  "model": "openai/gpt-5.2",
+  "model_name": "gpt-5.4",
+  "model": "openai/gpt-5.4",
+  "api_key": "sk-..."
+}
+```
+
+### VolcEngine (Doubao)
+
+```json
+{
+  "model_name": "ark-code-latest",
+  "model": "volcengine/ark-code-latest",
   "api_key": "sk-..."
 }
 ```
@@ -127,7 +144,7 @@ This enables **multi-agent support** with flexible provider selection:
 ```json
 {
   "model_name": "my-model",
-  "model": "litellm/gpt-5.2",
+  "model": "litellm/gpt-5.4",
   "api_base": "http://localhost:4000/v1"
 }
 ```
@@ -164,14 +181,14 @@ Configure multiple endpoints for the same model name — PicoClaw will automatic
 {
   "model_list": [
     {
-      "model_name": "gpt-5.2",
-      "model": "openai/gpt-5.2",
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_base": "https://api1.example.com/v1",
       "api_key": "sk-key1"
     },
     {
-      "model_name": "gpt-5.2",
-      "model": "openai/gpt-5.2",
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_base": "https://api2.example.com/v1",
       "api_key": "sk-key2"
     }

@@ -27,7 +27,8 @@ PicoClaw supports 19+ LLM providers through its `model_list` configuration.
 | **vLLM** | Local OpenAI-compatible | Local |
 | **LiteLLM** | LiteLLM proxy | Local proxy |
 | **Cerebras** | Fast inference | [cerebras.ai](https://cerebras.ai) |
-| **VolcEngine** | ByteDance models (CN) | [console.volcengine.com](https://console.volcengine.com) |
+| **VolcEngine** | Doubao models, CodingPlan (CN) | [console.volcengine.com](https://console.volcengine.com) |
+| **BytePlus** | CodingPlan (International) | [console.byteplus.com](https://console.byteplus.com) |
 | **Antigravity** | Google Cloud Code Assist | OAuth only |
 | **Minimax** | MiniMax models | [platform.minimaxi.com](https://platform.minimaxi.com) |
 | **GitHub Copilot** | Copilot models | — |
@@ -39,7 +40,7 @@ PicoClaw supports 19+ LLM providers through its `model_list` configuration.
   "model_list": [
     {
       "model_name": "my-model",
-      "model": "openai/gpt-5.2",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-..."
     }
   ],

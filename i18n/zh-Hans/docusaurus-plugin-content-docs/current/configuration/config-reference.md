@@ -13,7 +13,7 @@ title: 完整配置参考
     "defaults": {
       "workspace": "~/.picoclaw/workspace",
       "restrict_to_workspace": true,
-      "model_name": "gpt4",
+      "model_name": "gpt-5.4",
       "max_tokens": 32768,
       "max_tool_iterations": 50
     }
@@ -21,8 +21,13 @@ title: 完整配置参考
 
   "model_list": [
     {
-      "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
+      "model_name": "ark-code-latest",
+      "model": "volcengine/ark-code-latest",
+      "api_key": "sk-your-volcengine-key"
+    },
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-your-openai-key",
       "api_base": "https://api.openai.com/v1"
     },
@@ -43,14 +48,14 @@ title: 完整配置参考
       "api_key": "sk-your-deepseek-key"
     },
     {
-      "model_name": "loadbalanced-gpt4",
-      "model": "openai/gpt-5.2",
+      "model_name": "loadbalanced-gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-key1",
       "api_base": "https://api1.example.com/v1"
     },
     {
-      "model_name": "loadbalanced-gpt4",
-      "model": "openai/gpt-5.2",
+      "model_name": "loadbalanced-gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-key2",
       "api_base": "https://api2.example.com/v1"
     }

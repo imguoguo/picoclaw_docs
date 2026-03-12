@@ -8,7 +8,7 @@ title: 快速开始
 2 分钟内启动 PicoClaw。
 
 :::tip 获取 API Key
-免费 API Key：[OpenRouter](https://openrouter.ai/keys)（每月 20 万 token）· [智谱 AI](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys)（每月 20 万 token）
+在 `~/.picoclaw/config.json` 中设置您的 API Key。获取 API Key：[Volcengine（CodingPlan）](https://console.volcengine.com)（LLM）· [OpenRouter](https://openrouter.ai/keys)（LLM）· [智谱 AI](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys)（LLM）。网络搜索是**可选的** — 获取免费的 [Tavily API](https://tavily.com)（每月 1000 次免费查询）或 [Brave Search API](https://brave.com/search/api)（每月 2000 次免费查询）
 :::
 
 ## 第一步：初始化
@@ -28,19 +28,24 @@ picoclaw onboard
   "agents": {
     "defaults": {
       "workspace": "~/.picoclaw/workspace",
-      "model_name": "gpt4",
+      "model_name": "gpt-5.4",
       "max_tokens": 32768,
       "max_tool_iterations": 50
     }
   },
   "model_list": [
     {
-      "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
+      "model_name": "ark-code-latest",
+      "model": "volcengine/ark-code-latest",
+      "api_key": "sk-your-api-key"
+    },
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_key": "your-api-key"
     },
     {
-      "model_name": "claude",
+      "model_name": "claude-sonnet-4.6",
       "model": "anthropic/claude-sonnet-4-6",
       "api_key": "your-anthropic-key"
     }
@@ -165,8 +170,10 @@ termux-chroot ./picoclaw-linux-arm64 onboard
 
 | 服务 | 免费额度 | 用途 |
 | --- | --- | --- |
-| **OpenRouter** | 每月 20 万 token | 访问多种模型（Claude、GPT-4 等） |
+| **OpenRouter** | 每月 20 万 token | 多模型聚合（Claude、GPT-4 等） |
+| **火山引擎 CodingPlan** | 9.9 元/首月 | 最适合国内用户，多种 SOTA 模型（豆包、DeepSeek 等） |
 | **智谱 AI** | 每月 20 万 token | 适合国内用户 |
-| **Brave Search** | 每月 2000 次查询 | 网络搜索 |
-| **Groq** | 免费额度 | 快速推理（Llama、Mixtral） |
-| **Cerebras** | 免费额度 | 快速推理（Llama、Qwen） |
+| **Brave Search** | 每月 2000 次查询 | 网络搜索功能 |
+| **Tavily** | 每月 1000 次查询 | AI Agent 搜索优化 |
+| **Groq** | 提供免费层级 | 极速推理（Llama、Mixtral） |
+| **Cerebras** | 提供免费层级 | 极速推理（Llama、Qwen） |
