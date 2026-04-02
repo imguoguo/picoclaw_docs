@@ -39,6 +39,7 @@ const sidebars = {
         'credential-encryption',
         'sensitive-data-filtering',
         'configuration/exec',
+        'rate-limiting',
       ],
     },
     {
