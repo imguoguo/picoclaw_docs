@@ -92,4 +92,4 @@ When a model has fallbacks configured, each candidate is rate-limited independen
 
 ## Burst behavior
 
-The bucket starts **full** (burst = RPM). For `rpm: 3`, the first 3 requests fire instantly; subsequent requests are spaced ~20 seconds apart.
+The bucket starts **full** with `rpm` tokens. For `rpm: 3`, the first 3 requests fire instantly (one token each); after the bucket empties, one token refills every 20 s (= 60 / rpm), spacing subsequent requests accordingly.
