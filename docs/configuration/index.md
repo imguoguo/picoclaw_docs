@@ -9,8 +9,12 @@ sidebar_label: Overview
 Config file: `~/.picoclaw/config.json`
 
 :::tip Config Version 2
-PicoClaw v2 introduces config version 2. New configs should include `"version": 2` at the top level. Existing V0/V1 configs are automatically migrated on first load. See the [Migration Guide](../migration/model-list-migration.md) for details.
+Config schema version `2` is the current format. New configs should include `"version": 2` at the top level. Existing V0/V1 configs are automatically migrated on first load. See the [Migration Guide](../migration/model-list-migration.md) for details.
 :::
+
+For a smoother setup experience, we recommend using Web UI as the primary way to configure and manage models.
+
+![Web UI Model Setup](/img/providers/webuimodel.png)
 
 ## Sections
 
@@ -95,7 +99,7 @@ You can also override this with the environment variable `PICOCLAW_LOG_LEVEL`.
 
 ## Security Configuration
 
-PicoClaw supports separating sensitive data (API keys, tokens, secrets) from your main configuration by storing them in a `.security.yml` file. See [Security Sandbox](./security-sandbox.md) for workspace restrictions and [Credential Encryption](../credential-encryption.md) for encrypting API keys.
+PicoClaw supports separating sensitive data (API keys, tokens, secrets) from your main configuration by storing them in a `.security.yml` file. See [`.security.yml Reference`](./security-reference.md) for field mapping and overlay rules, [Security Sandbox](./security-sandbox.md) for workspace restrictions, and [Credential Encryption](../credential-encryption.md) for encrypted secret formats.
 
 Key benefits:
 - **Security**: Sensitive data is never in your main config file
@@ -113,6 +117,7 @@ See the [Full Config Reference](./config-reference.md) for the complete bindings
 
 - [Model Configuration (model_list)](./model-list.md) — add LLM providers
 - [Security Sandbox](./security-sandbox.md) — workspace restrictions and `.security.yml`
+- [`.security.yml` Reference](./security-reference.md) — field-by-field mapping and precedence
 - [Heartbeat](./heartbeat.md) — periodic tasks
 - [Tools Configuration](./tools.md) — web search, exec, cron
 - [Credential Encryption](../credential-encryption.md) — encrypt API keys with `enc://`

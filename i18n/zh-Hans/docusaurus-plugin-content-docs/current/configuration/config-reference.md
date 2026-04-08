@@ -7,6 +7,12 @@ title: 完整配置参考
 
 完整带注释的 `config.json` 示例。可从仓库中复制 `config/config.example.json`。
 
+这里的 `"version": 2` 指的是**配置 schema 版本 2**，不代表软件发布版本号。
+
+日常模型管理推荐优先使用 Web UI；手动编辑 JSON 更适合自动化模板和高级部署场景。
+
+![Web UI 模型配置](/img/providers/webuimodel.png)
+
 ```json
 {
   "version": 2,
@@ -25,18 +31,18 @@ title: 完整配置参考
     {
       "model_name": "ark-code-latest",
       "model": "volcengine/ark-code-latest",
-      "api_key": "sk-your-volcengine-key"
+      "api_keys": ["sk-your-volcengine-key"]
     },
     {
       "model_name": "gpt-5.4",
       "model": "openai/gpt-5.4",
-      "api_key": "sk-your-openai-key",
+      "api_keys": ["sk-your-openai-key"],
       "api_base": "https://api.openai.com/v1"
     },
     {
       "model_name": "claude-sonnet-4.6",
       "model": "anthropic/claude-sonnet-4.6",
-      "api_key": "sk-ant-your-key",
+      "api_keys": ["sk-ant-your-key"],
       "api_base": "https://api.anthropic.com/v1"
     },
     {
@@ -47,18 +53,18 @@ title: 完整配置参考
     {
       "model_name": "deepseek",
       "model": "deepseek/deepseek-chat",
-      "api_key": "sk-your-deepseek-key"
+      "api_keys": ["sk-your-deepseek-key"]
     },
     {
       "model_name": "loadbalanced-gpt-5.4",
       "model": "openai/gpt-5.4",
-      "api_key": "sk-key1",
+      "api_keys": ["sk-key1"],
       "api_base": "https://api1.example.com/v1"
     },
     {
       "model_name": "loadbalanced-gpt-5.4",
       "model": "openai/gpt-5.4",
-      "api_key": "sk-key2",
+      "api_keys": ["sk-key2"],
       "api_base": "https://api2.example.com/v1"
     }
   ],
@@ -146,33 +152,11 @@ title: 完整配置参考
     },
     "wecom": {
       "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY",
-      "webhook_path": "/webhook/wecom",
+      "bot_id": "YOUR_BOT_ID",
+      "secret": "YOUR_SECRET",
+      "websocket_url": "wss://openws.work.weixin.qq.com",
+      "send_thinking_message": true,
       "allow_from": [],
-      "reply_timeout": 5,
-      "reasoning_channel_id": ""
-    },
-    "wecom_app": {
-      "enabled": false,
-      "corp_id": "YOUR_CORP_ID",
-      "corp_secret": "YOUR_CORP_SECRET",
-      "agent_id": 1000002,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-app",
-      "allow_from": [],
-      "reply_timeout": 5,
-      "reasoning_channel_id": ""
-    },
-    "wecom_aibot": {
-      "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-aibot",
-      "max_steps": 10,
-      "welcome_message": "你好！我是你的 AI 助手，有什么可以帮你的吗？",
       "reasoning_channel_id": ""
     },
     "matrix": {
@@ -198,7 +182,7 @@ title: 完整配置参考
     "web": {
       "brave": {
         "enabled": false,
-        "api_key": "YOUR_BRAVE_API_KEY",
+        "api_keys": ["YOUR_BRAVE_API_KEY"],
         "max_results": 5
       },
       "duckduckgo": {
@@ -207,7 +191,7 @@ title: 完整配置参考
       },
       "perplexity": {
         "enabled": false,
-        "api_key": "pplx-xxx",
+        "api_keys": ["pplx-xxx"],
         "max_results": 5
       },
       "proxy": ""
@@ -313,7 +297,7 @@ title: 完整配置参考
 | 字段 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | `model_name` | string | 是 | 别名（在 `agents.defaults.model_name` 中引用） |
-| `model` | string | 是 | `vendor/model-id` 格式 |
+| `model` | string | 是 | `vendor/model-id` 格式。前导 `vendor/` 仅用于协议与默认 `api_base` 识别，不会原样发送给上游。 |
 | `api_keys` | array | 视情况 | API 认证密钥（数组；支持多个密钥用于负载均衡）。基于 HTTP 的提供商必填，除非 `api_base` 指向本地服务。 |
 | `api_base` | string | 否 | 覆盖默认 API 地址 |
 | `enabled` | bool | 否 | 该模型条目是否启用。迁移期间默认为 `true`（有 API 密钥或名为 `local-model` 的模型自动启用）。设为 `false` 可禁用模型但不删除配置。 |
@@ -328,8 +312,8 @@ title: 完整配置参考
 | `fallbacks` | array | 否 | 故障转移备用模型名 |
 | `extra_body` | object | 否 | 注入 API 请求体的额外字段 |
 
-:::note V2 中 API Key 格式变更
-在 V2 中，`api_key`（单数字符串）已移除，仅支持 `api_keys`（数组）。从 V0/V1 迁移时，两种格式会自动合并为 `api_keys` 数组。API 密钥也可使用 `SecureString` 模式：明文、`enc://<base64>`（加密）或 `file://<path>`（文件引用）。详见[凭证加密](../credential-encryption.md)。
+:::note Schema V2 中 API Key 行为
+在配置 schema V2 中，`config.json` 的 `model_list[].api_key` 会被忽略。请使用 `api_keys`，并优先将真实密钥写入 `.security.yml`。从 V0/V1 迁移时，旧的 `api_key` 与 `api_keys` 会自动合并为 `api_keys`。API 密钥支持 `SecureString` 格式：明文、`enc://<base64>`、`file://<path>`。详见[凭证加密](../credential-encryption.md)。
 :::
 
 ### `gateway`
@@ -384,12 +368,17 @@ title: 完整配置参考
 
 ### .security.yml 文件
 
-PicoClaw 支持专用的 `.security.yml` 文件来存储敏感凭证（API 密钥、令牌、密钥）。此文件应添加到 `.gitignore` 中，以防止意外提交密钥。
+PicoClaw 支持专用的 `.security.yml` 文件来存储敏感凭证（API 密钥、令牌、密钥）。该文件与当前生效的 `config.json` 位于同一目录（如果使用 `PICOCLAW_CONFIG` 指定了自定义配置路径，也遵循该目录）。
 
 ### 密钥优先级顺序
 
-解析凭证时，PicoClaw 使用以下优先级顺序：
+解析凭证时，PicoClaw 按以下顺序应用值：
 
-1. **config.json**：在主配置文件中定义的凭证优先级最高
-2. **.security.yml**：在安全文件中定义的凭证作为备用
+1. **环境变量**：最高优先级（`env.Parse` 在文件加载后执行）
+2. **.security.yml**：覆盖 `config.json` 中同路径字段
+3. **config.json**：基础值
+
+对于 schema V2 的 `model_list`，`config.json` 中的 `api_key` 会被忽略，请使用 `.security.yml` + `api_keys`。
+
+关于 `.security.yml` 的字段路径、映射规则和完整示例，请参考[`.security.yml 配置参考`](./security-reference.md)。
 

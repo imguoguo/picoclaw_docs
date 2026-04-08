@@ -7,6 +7,12 @@ title: Full Configuration Reference
 
 Complete annotated `config.json` example. Copy from `config/config.example.json` in the repository.
 
+`"version": 2` here means **config schema version 2**, not a product release version.
+
+For day-to-day model management, Web UI is recommended. Use manual JSON editing for automation templates and advanced deployment workflows.
+
+![Web UI Model Setup](/img/providers/webuimodel.png)
+
 ```json
 {
   "version": 2,
@@ -25,18 +31,18 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
     {
       "model_name": "ark-code-latest",
       "model": "volcengine/ark-code-latest",
-      "api_key": "sk-your-volcengine-key"
+      "api_keys": ["sk-your-volcengine-key"]
     },
     {
       "model_name": "gpt-5.4",
       "model": "openai/gpt-5.4",
-      "api_key": "sk-your-openai-key",
+      "api_keys": ["sk-your-openai-key"],
       "api_base": "https://api.openai.com/v1"
     },
     {
       "model_name": "claude-sonnet-4.6",
       "model": "anthropic/claude-sonnet-4.6",
-      "api_key": "sk-ant-your-key",
+      "api_keys": ["sk-ant-your-key"],
       "api_base": "https://api.anthropic.com/v1"
     },
     {
@@ -47,18 +53,18 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
     {
       "model_name": "deepseek",
       "model": "deepseek/deepseek-chat",
-      "api_key": "sk-your-deepseek-key"
+      "api_keys": ["sk-your-deepseek-key"]
     },
     {
       "model_name": "loadbalanced-gpt-5.4",
       "model": "openai/gpt-5.4",
-      "api_key": "sk-key1",
+      "api_keys": ["sk-key1"],
       "api_base": "https://api1.example.com/v1"
     },
     {
       "model_name": "loadbalanced-gpt-5.4",
       "model": "openai/gpt-5.4",
-      "api_key": "sk-key2",
+      "api_keys": ["sk-key2"],
       "api_base": "https://api2.example.com/v1"
     }
   ],
@@ -146,33 +152,11 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
     },
     "wecom": {
       "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY",
-      "webhook_path": "/webhook/wecom",
+      "bot_id": "YOUR_BOT_ID",
+      "secret": "YOUR_SECRET",
+      "websocket_url": "wss://openws.work.weixin.qq.com",
+      "send_thinking_message": true,
       "allow_from": [],
-      "reply_timeout": 5,
-      "reasoning_channel_id": ""
-    },
-    "wecom_app": {
-      "enabled": false,
-      "corp_id": "YOUR_CORP_ID",
-      "corp_secret": "YOUR_CORP_SECRET",
-      "agent_id": 1000002,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-app",
-      "allow_from": [],
-      "reply_timeout": 5,
-      "reasoning_channel_id": ""
-    },
-    "wecom_aibot": {
-      "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-aibot",
-      "max_steps": 10,
-      "welcome_message": "Hello! I'm your AI assistant. How can I help you today?",
       "reasoning_channel_id": ""
     },
     "matrix": {
@@ -198,7 +182,7 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
     "web": {
       "brave": {
         "enabled": false,
-        "api_key": "YOUR_BRAVE_API_KEY",
+        "api_keys": ["YOUR_BRAVE_API_KEY"],
         "max_results": 5
       },
       "duckduckgo": {
@@ -207,7 +191,7 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
       },
       "perplexity": {
         "enabled": false,
-        "api_key": "pplx-xxx",
+        "api_keys": ["pplx-xxx"],
         "max_results": 5
       },
       "proxy": ""
@@ -313,7 +297,7 @@ When enabled, PicoClaw scores each incoming message against structural features 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `model_name` | string | Yes | Alias used in `agents.defaults.model_name` |
-| `model` | string | Yes | `vendor/model-id` format |
+| `model` | string | Yes | `vendor/model-id` format. The leading `vendor/` is used only for protocol/API base resolution and is not sent upstream as-is. |
 | `api_keys` | array | Depends | API authentication keys (array; supports multiple keys for load balancing). Required for HTTP-based providers unless `api_base` points to a local server. |
 | `api_base` | string | No | Override default API base URL |
 | `enabled` | bool | No | Whether this model entry is active. Defaults to `true` during migration for models with API keys or named `local-model`. Set to `false` to disable a model without removing its configuration. |
@@ -328,8 +312,8 @@ When enabled, PicoClaw scores each incoming message against structural features 
 | `fallbacks` | array | No | Fallback model names for failover |
 | `extra_body` | object | No | Additional fields to inject into API request body |
 
-:::note API Key Format Change in V2
-In V2, `api_key` (singular string) has been removed. Only `api_keys` (array) is supported. During migration from V0/V1, both formats are automatically merged into the `api_keys` array. API keys can also use the `SecureString` pattern: plaintext, `enc://<base64>` (encrypted), or `file://<path>` (file reference). See [Credential Encryption](../credential-encryption.md).
+:::note API Key Behavior in Schema V2
+In config schema V2, `model_list[].api_key` in `config.json` is ignored. Use `api_keys` and prefer storing real credentials in `.security.yml`. During V0/V1 migration, legacy `api_key` and `api_keys` are merged into `api_keys` automatically. API keys can use `SecureString` formats: plaintext, `enc://<base64>`, or `file://<path>`. See [Credential Encryption](../credential-encryption.md).
 :::
 
 ### `gateway`
@@ -384,11 +368,16 @@ Supported by: Slack, Matrix.
 
 ### .security.yml File
 
-PicoClaw now supports a dedicated `.security.yml` file for storing sensitive credentials like API keys. This file is intended to be added to `.gitignore` to prevent accidental commit of secrets.
+PicoClaw supports a dedicated `.security.yml` file for sensitive credentials (API keys, tokens, secrets). It is loaded from the same directory as the active `config.json` (including custom paths set by `PICOCLAW_CONFIG`).
 
 ### Key Priority Order
 
-When resolving credentials, PicoClaw uses the following priority order:
+When resolving credentials, PicoClaw applies values in this order:
 
-1. **config.json**: Credentials defined in the main configuration file take highest priority
-2. **.security.yml**: Credentials defined in the security file are used as fallbacks
+1. **Environment variables**: Highest priority (`env.Parse` runs after file loading)
+2. **.security.yml**: Overrides same-path values from `config.json`
+3. **config.json**: Base values
+
+For `model_list` in schema V2, `api_key` in `config.json` is ignored; use `.security.yml` + `api_keys`.
+
+For field-by-field `.security.yml` paths, mapping rules, and complete examples, see [`.security.yml Reference`](./security-reference.md).
