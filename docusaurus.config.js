@@ -18,7 +18,11 @@ const config = {
   organizationName: 'sipeed',
   projectName: 'picoclaw_docs',
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   i18n: {
     defaultLocale: 'en',
@@ -33,6 +37,10 @@ const config = {
         label: '中文',
         direction: 'ltr',
         htmlLang: 'zh-CN',
+        // Pin the i18n folder path to "zh-Hans". Docusaurus 3.10 derives
+        // the default path from htmlLang ?? locale, which would otherwise
+        // make it "zh-CN" and silently ignore i18n/zh-Hans/.
+        path: 'zh-Hans',
       },
     },
   },
