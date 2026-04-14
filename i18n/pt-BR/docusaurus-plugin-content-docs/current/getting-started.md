@@ -7,42 +7,94 @@ title: Começar agora
 
 Coloque o PicoClaw para rodar em 2 minutos.
 
-## Caminho padrão de configuração (recomendado): WebUI
+:::tip Obtenha chaves de API
+Defina suas chaves de API em `~/.picoclaw/config.json`. Obtenha chaves de API: [Volcengine (CodingPlan)](https://console.volcengine.com) (LLM) · [OpenRouter](https://openrouter.ai/keys) (LLM) · [Zhipu AI](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys) (LLM). Busca na web é **opcional** - obtenha [Tavily API](https://tavily.com) grátis (1000 consultas/mês) ou [Brave Search API](https://brave.com/search/api) grátis (2000 consultas/mês)
+:::
+
+## Caminho padrão de configuração (recomendado): WebUI (`picoclaw-launcher`)
 
 Para a maioria das pessoas, o caminho padrão é configurar pelo **WebUI via Launcher** (em vez de editar JSON manualmente).
 
-1. Inicialize uma vez:
-
-```bash
-picoclaw onboard
-```
-
-2. Inicie o launcher WebUI:
+1. Inicie diretamente o launcher WebUI (sem inicialização prévia), por comando ou com duplo clique:
 
 ```bash
 picoclaw-launcher
 ```
 
-3. Abra `http://localhost:18800` e conclua no painel:
+Ou dê duplo clique em `picoclaw-launcher` (`picoclaw-launcher.exe` no Windows).
+
+`picoclaw-launcher-tui` não é mais mantido e está sendo descontinuado gradualmente. Prefira `picoclaw-launcher`.
+
+2. Abra `http://localhost:18800` e conclua no painel:
 - Adicione pelo menos um modelo LLM e defina como padrão
-- Configure busca web (recomendado antes do primeiro uso real; veja a próxima seção)
+- Configure busca web (atualmente via arquivos de configuração; veja a próxima seção)
 - Inicie o Gateway no painel do launcher
 
 ![WebUI](/img/picoclaw-launcher.png)
+
+### Editar arquivos de configuração
+
+O arquivo de configuração padrão é `~/.picoclaw/config.json` (você pode sobrescrever com `PICOCLAW_CONFIG`).
+Padrão recomendado no schema `2`: mantenha as configurações estruturais (como `version`, `agents`, `model_list`, `tools`) em `config.json` e valores sensíveis, como API keys/tokens, em `.security.yml` no mesmo diretório.
+Observação: no schema `2`, `model_list[].api_key` em `config.json` é ignorado; use `api_keys` em `.security.yml`.
+
+`~/.picoclaw/config.json`:
+
+```json
+{
+  "version": 2,
+  "agents": {
+    "defaults": {
+      "workspace": "~/.picoclaw/workspace",
+      "model_name": "gpt-5.4",
+      "max_tokens": 32768,
+      "max_tool_iterations": 50
+    }
+  },
+  "model_list": [
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4"
+    }
+  ],
+  "tools": {
+    "web": {
+      "brave": {
+        "enabled": true,
+        "max_results": 5
+      },
+      "duckduckgo": {
+        "enabled": true,
+        "max_results": 5
+      }
+    }
+  }
+}
+```
+
+`~/.picoclaw/.security.yml`:
+
+```yaml
+model_list:
+  gpt-5.4:0:
+    api_keys:
+      - "sk-your-openai-key"
+web:
+  brave:
+    api_keys:
+      - "YOUR_BRAVE_API_KEY"
+```
+
+Para mais campos de modelo e exemplos completos, veja [Configuração de modelos](./configuration/model-list.md).
+
+Na versão atual, a busca web deve ser configurada por arquivos (`config.json` + `.security.yml`); o WebUI ainda não oferece essa opção.
 
 ## Configuração de busca web
 
 Sem busca web, muitas tarefas reais (notícias recentes, links, verificação de fatos) ficam limitadas.
 Configure pelo menos um mecanismo de busca na configuração inicial.
 
-### Opção A: configurar no WebUI (recomendado)
-
-No Launcher WebUI, abra as configurações de ferramentas e habilite os provedores de busca:
-- [`Brave Search`](https://brave.com/search/api) (melhor padrão; possui cota gratuita)
-- fallback [`DuckDuckGo`](https://duckduckgo.com/) (não exige chave)
-- [`Baidu Search`](https://www.baidu.com/) (1000 consultas grátis/dia; melhor para conteúdo da China continental)
-
-### Opção B: `config.json` + `.security.yml` (padrão no schema v2)
+### Configuração: `config.json` + `.security.yml`
 
 No schema v2, mantenha a estrutura no `config.json` e as chaves reais no `.security.yml`.
 
@@ -75,9 +127,9 @@ web:
 ```
 
 Obtenha chaves:
+- [Baidu Search](https://www.baidu.com/) (1000 consultas grátis/dia; melhor para conteúdo da China continental)
 - [Brave Search API](https://brave.com/search/api) (2000 consultas grátis/mês)
 - [Tavily API](https://tavily.com) (1000 consultas grátis/mês)
-- [Baidu Search](https://www.baidu.com/) (1000 consultas grátis/dia; melhor para conteúdo da China continental)
 
 ## Configuração de modelos (se preferir JSON)
 
@@ -141,12 +193,6 @@ Veja [Referência do `.security.yml`](./configuration/security-reference.md) par
 | `picoclaw cron list` | Lista tarefas agendadas |
 | `picoclaw cron add ...` | Adiciona tarefa agendada |
 
-## Web UI (`picoclaw-launcher`)
-
-Dê duplo clique em `picoclaw-launcher` (ou `picoclaw-launcher.exe` no Windows) para abrir o WebUI em `http://localhost:18800`.
-
-`picoclaw-launcher-tui` não é mais mantido e está sendo descontinuado gradualmente. Prefira `picoclaw-launcher`.
-
 ### Parâmetros do Web UI `picoclaw-launcher`
 
 | Parâmetro | Descrição | Exemplo |
@@ -199,9 +245,9 @@ Isso é normal se você ainda não configurou uma chave de API de busca.
 
 Para habilitar a busca web:
 
-1. **Opção 1 (recomendada)**: pegue uma chave gratuita em [https://brave.com/search/api](https://brave.com/search/api) (2000 consultas grátis/mês).
-2. **Opção 2 (sem cartão de crédito)**: use fallback [**DuckDuckGo**](https://duckduckgo.com/) (sem chave).
-3. **Opção 3 (para conteúdo da China continental)**: use [**Baidu Search**](https://www.baidu.com/) (1000 consultas grátis/dia).
+1. **Opção 1 (prioridade para conteúdo da China continental)**: use [**Baidu Search**](https://www.baidu.com/) (1000 consultas grátis/dia).
+2. **Opção 2 (recomendada)**: pegue uma chave gratuita em [https://brave.com/search/api](https://brave.com/search/api) (2000 consultas grátis/mês).
+3. **Opção 3 (sem cartão de crédito)**: use [**DuckDuckGo**](https://duckduckgo.com/) fallback (sem chave).
 
 ### Erros de filtragem de conteúdo
 
@@ -218,8 +264,9 @@ Apenas uma instância de `picoclaw gateway` pode rodar por vez. Pare outras inst
 | **OpenRouter** | 200K tokens/mês | Vários modelos (Claude, GPT-4 etc.) |
 | **Volcengine CodingPlan** | ¥9.9 no primeiro mês | Melhor para usuários chineses, vários modelos SOTA (Doubao, DeepSeek etc.) |
 | **Zhipu** | 200K tokens/mês | Para usuários chineses |
+| [**Baidu Search**](https://www.baidu.com/) | 1000 consultas/dia | Melhor cobertura para conteúdo da China continental |
 | [**Brave Search**](https://brave.com/search/api) | 2000 consultas/mês | Busca na web |
 | [**Tavily**](https://tavily.com) | 1000 consultas/mês | Busca otimizada para agentes de IA |
-| [**Baidu Search**](https://www.baidu.com/) | 1000 consultas/dia | Melhor cobertura para conteúdo da China continental |
 | **Groq** | Camada gratuita | Inferência rápida (Llama, Mixtral) |
 | **Cerebras** | Camada gratuita | Inferência rápida (Llama, Qwen) |
+

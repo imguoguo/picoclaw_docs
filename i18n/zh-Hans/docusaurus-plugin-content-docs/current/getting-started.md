@@ -7,44 +7,94 @@ title: 快速开始
 
 2 分钟内启动 PicoClaw。
 
-## 默认配置方式（推荐）：使用 WebUI
+:::tip 获取 API Key
+在 `~/.picoclaw/config.json` 中设置您的 API Key。获取 API Key：[Volcengine（CodingPlan）](https://console.volcengine.com)（LLM）· [OpenRouter](https://openrouter.ai/keys)（LLM）· [智谱 AI](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys)（LLM）。网络搜索是**可选的** — 获取免费的 [Tavily API](https://tavily.com)（每月 1000 次免费查询）或 [Brave Search API](https://brave.com/search/api)（每月 2000 次免费查询）
+:::
+
+## 默认配置方式（推荐）：使用 WebUI（`picoclaw-launcher`）
 
 对大多数用户，默认推荐通过 **Launcher WebUI** 完成配置，而不是先手动改 JSON。
 
-1. 先初始化一次：
-
-```bash
-picoclaw onboard
-```
-
-2. 启动 WebUI 启动器：
+1. 直接启动 WebUI 启动器（无需预先初始化），可用命令行或直接双击：
 
 ```bash
 picoclaw-launcher
 ```
 
-3. 打开 `http://localhost:18800`，在界面内完成：
+双击 `picoclaw-launcher`（Windows 上为 `picoclaw-launcher.exe`）会打开 `http://localhost:18800`。
+
+`picoclaw-launcher-tui`已经停止维护，正在逐步舍弃，建议优先使用 `picoclaw-launcher`。
+
+2. 打开 `http://localhost:18800`，在界面内完成：
 - 至少添加一个模型并设置为默认模型
-- 配置网络搜索（建议首次使用前就配置，见下一节）
+- 配置网络搜索（当前需通过配置文件，见下一节）
 - 在 Launcher 中启动 Gateway
 
 ![WebUI](/img/picoclaw-launcher.png)
+
+### 编辑配置文件方式
+
+当前默认配置文件是 `~/.picoclaw/config.json`（可通过 `PICOCLAW_CONFIG` 指定自定义路径）。
+推荐使用 schema `2` 的配置方式：将结构性配置（如 `version`、`agents`、`model_list`、`tools`）放在 `config.json`，将 API Key / Token 等敏感信息放在同目录的 `.security.yml`。
+注意：在 schema `2` 中，`config.json` 里的 `model_list[].api_key` 会被忽略，应在 `.security.yml` 中使用 `api_keys`。
+
+`~/.picoclaw/config.json`：
+
+```json
+{
+  "version": 2,
+  "agents": {
+    "defaults": {
+      "workspace": "~/.picoclaw/workspace",
+      "model_name": "gpt-5.4",
+      "max_tokens": 32768,
+      "max_tool_iterations": 50
+    }
+  },
+  "model_list": [
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4"
+    }
+  ],
+  "tools": {
+    "web": {
+      "brave": {
+        "enabled": true,
+        "max_results": 5
+      },
+      "duckduckgo": {
+        "enabled": true,
+        "max_results": 5
+      }
+    }
+  }
+}
+```
+
+`~/.picoclaw/.security.yml`：
+
+```yaml
+model_list:
+  gpt-5.4:0:
+    api_keys:
+      - "sk-your-openai-key"
+web:
+  brave:
+    api_keys:
+      - "YOUR_BRAVE_API_KEY"
+```
+
+更多模型字段与完整示例详见 [Model 配置](./configuration/model-list.md)。
+
+当前版本中，网络搜索需通过配置文件配置（`config.json` + `.security.yml`），WebUI 暂无对应配置入口。
 
 ## 网络搜索配置
 
 如果不配置搜索，很多真实场景（查最新信息、找链接、核验事实）体验会明显受限。
 建议在首次配置时就启用至少一个搜索引擎。
 
-### 方式 A：在 WebUI 中配置（推荐）
-
-在 Launcher WebUI 的工具配置中启用 Web Search 提供商：
-- [`Baidu Search`](https://www.baidu.com/)（单日 1000 次免费查询，更偏向国内内容）
-- [`Brave Search`](https://brave.com/search/api)（推荐主用，免费额度可用）
-- [`DuckDuckGo`](https://duckduckgo.com/)（无 Key 回退）
-
-### 方式 B：`config.json` + `.security.yml`（schema v2 默认）
-
-在 schema v2 中，推荐把结构放在 `config.json`，真实密钥放在 `.security.yml`。
+### 配置方式：`config.json` + `.security.yml`
 
 编辑 `~/.picoclaw/config.json`：
 
@@ -140,12 +190,6 @@ model_list:
 | `picoclaw status` | 显示状态 |
 | `picoclaw cron list` | 列出所有定时任务 |
 | `picoclaw cron add ...` | 添加定时任务 |
-
-## Web UI（`picoclaw-launcher`）
-
-双击 `picoclaw-launcher`（Windows 上为 `picoclaw-launcher.exe`）会打开 `http://localhost:18800`。
-
-`picoclaw-launcher-tui`已经停止维护，正在逐步舍弃，建议优先使用 `picoclaw-launcher`。
 
 ### Web UI `picoclaw-launcher` 参数说明
 
