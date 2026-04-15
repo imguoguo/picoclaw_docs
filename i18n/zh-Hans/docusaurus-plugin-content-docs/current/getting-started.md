@@ -7,210 +7,45 @@ title: 快速开始
 
 2 分钟内启动 PicoClaw。
 
-:::tip 获取 API Key
-在 `~/.picoclaw/config.json` 中设置您的 API Key。获取 API Key：[Volcengine（CodingPlan）](https://console.volcengine.com)（LLM）· [OpenRouter](https://openrouter.ai/keys)（LLM）· [智谱 AI](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys)（LLM）。网络搜索是**可选的** — 获取免费的 [Tavily API](https://tavily.com)（每月 1000 次免费查询）或 [Brave Search API](https://brave.com/search/api)（每月 2000 次免费查询）
+:::tip 提醒
+请先获取并确保您的 API Key 可用。支持的模型列表请见 [Model 配置](./configuration/model-list.md)。网络搜索是**可选的**，可获取免费的 [Tavily API](https://tavily.com)（每月 1000 次免费查询）或 [Brave Search API](https://brave.com/search/api)（每月 2000 次免费查询）。
 :::
 
-## 默认配置方式（推荐）：使用 WebUI（`picoclaw-launcher`）
+## 使用 WebUI（`picoclaw-launcher`）进行配置
 
-对大多数用户，默认推荐通过 **Launcher WebUI** 完成配置，而不是先手动改 JSON。
+对大多数用户，推荐通过 **Launcher WebUI** 完成配置，而不是先手动改配置文件。
 
-1. 直接启动 WebUI 启动器（无需预先初始化），可用命令行或直接双击：
+1. 直接启动 WebUI 启动器（无需预初始化），可用命令行：
 
 ```bash
 picoclaw-launcher
 ```
 
-双击 `picoclaw-launcher`（Windows 上为 `picoclaw-launcher.exe`）会打开 `http://localhost:18800`。
+或双击 `picoclaw-launcher`（Windows 为 `picoclaw-launcher.exe`）。
 
-`picoclaw-launcher-tui`已经停止维护，正在逐步舍弃，建议优先使用 `picoclaw-launcher`。
+>`picoclaw-launcher-tui` 已停止维护，正在逐步淘汰，建议优先使用 `picoclaw-launcher`。
 
 2. 打开 `http://localhost:18800`，在界面内完成：
-- 至少添加一个模型并设置为默认模型
-- 配置网络搜索（当前需通过配置文件，见下一节）
+- 至少添加一个模型并设为默认模型
+- 配置网络搜索（当前需通过配置文件，见 [网络搜索配置](./configuration/web-search-setup.md) ）
 - 在 Launcher 中启动 Gateway
 
 ![WebUI](/img/picoclaw-launcher.png)
 
-### 编辑配置文件方式
+- 更多模型字段与完整配置文件见 [Model 配置](./configuration/model-list.md#配置文件))。
 
-当前默认配置文件是 `~/.picoclaw/config.json`（可通过 `PICOCLAW_CONFIG` 指定自定义路径）。
-推荐使用 schema `2` 的配置方式：将结构性配置（如 `version`、`agents`、`model_list`、`tools`）放在 `config.json`，将 API Key / Token 等敏感信息放在同目录的 `.security.yml`。
-注意：在 schema `2` 中，`config.json` 里的 `model_list[].api_key` 会被忽略，应在 `.security.yml` 中使用 `api_keys`。
+配置完成后就可以使用PicoClaw了。
+![WebUI](/img/Hello.png)
 
-`~/.picoclaw/config.json`：
+## 启用网络搜索
+如果不启用网络搜索，很多真实场景（查最新信息、找链接、事实核验）会明显受限。
+建议在首次配置时至少启用一个搜索引擎。
 
-```json
-{
-  "version": 2,
-  "agents": {
-    "defaults": {
-      "workspace": "~/.picoclaw/workspace",
-      "model_name": "gpt-5.4",
-      "max_tokens": 32768,
-      "max_tool_iterations": 50
-    }
-  },
-  "model_list": [
-    {
-      "model_name": "gpt-5.4",
-      "model": "openai/gpt-5.4"
-    }
-  ],
-  "tools": {
-    "web": {
-      "brave": {
-        "enabled": true,
-        "max_results": 5
-      },
-      "duckduckgo": {
-        "enabled": true,
-        "max_results": 5
-      }
-    }
-  }
-}
-```
-
-`~/.picoclaw/.security.yml`：
-
-```yaml
-model_list:
-  gpt-5.4:0:
-    api_keys:
-      - "sk-your-openai-key"
-web:
-  brave:
-    api_keys:
-      - "YOUR_BRAVE_API_KEY"
-```
-
-更多模型字段与完整示例详见 [Model 配置](./configuration/model-list.md)。
-
-当前版本中，网络搜索需通过配置文件配置（`config.json` + `.security.yml`），WebUI 暂无对应配置入口。
-
-## 网络搜索配置
-
-如果不配置搜索，很多真实场景（查最新信息、找链接、核验事实）体验会明显受限。
-建议在首次配置时就启用至少一个搜索引擎。
-
-### 配置方式：`config.json` + `.security.yml`
-
-编辑 `~/.picoclaw/config.json`：
-
-```json
-{
-  "tools": {
-    "web": {
-      "brave": {
-        "enabled": true,
-        "max_results": 5
-      },
-      "duckduckgo": {
-        "enabled": true,
-        "max_results": 5
-      }
-    }
-  }
-}
-```
-
-然后把密钥写入 `~/.picoclaw/.security.yml`：
-
-```yaml
-web:
-  brave:
-    api_keys:
-      - "YOUR_BRAVE_API_KEY"
-```
-
-申请 Key：
-- [Baidu Search](https://www.baidu.com/)（单日 1000 次免费查询，更偏向国内内容）
-- [Brave Search API](https://brave.com/search/api)（每月 2000 次免费查询）
-- [Tavily API](https://tavily.com)（每月 1000 次免费查询）
-
-## 模型配置（如果你偏好手动 JSON）
-
-如需手动配置，建议使用 `config.json` + `.security.yml`：
-
-```json
-{
-  "version": 2,
-  "agents": {
-    "defaults": {
-      "workspace": "~/.picoclaw/workspace",
-      "model_name": "gpt-5.4",
-      "max_tokens": 32768,
-      "max_tool_iterations": 50
-    }
-  },
-  "model_list": [
-    {
-      "model_name": "ark-code-latest",
-      "model": "volcengine/ark-code-latest"
-    },
-    {
-      "model_name": "gpt-5.4",
-      "model": "openai/gpt-5.4"
-    },
-    {
-      "model_name": "claude-sonnet-4.6",
-      "model": "anthropic/claude-sonnet-4-6"
-    }
-  ]
-}
-```
-
-`~/.picoclaw/.security.yml`：
-
-```yaml
-model_list:
-  ark-code-latest:0:
-    api_keys:
-      - "sk-your-volcengine-key"
-  gpt-5.4:0:
-    api_keys:
-      - "sk-your-openai-key"
-  claude-sonnet-4.6:0:
-    api_keys:
-      - "sk-your-anthropic-key"
-```
-
-详见 [Model 配置](./configuration/model-list.md)。
-密钥字段映射规则见 [`.security.yml 配置参考`](./configuration/security-reference.md)。
+当前版本中，网络搜索需通过配置文件（`config.json` + `.security.yml`）配置，WebUI 暂无对应入口。完整说明见 [网络搜索配置](./configuration/web-search-setup.md)。
 
 ## CLI 命令参考
 
-| 命令 | 描述 |
-| --- | --- |
-| `picoclaw onboard` | 初始化配置和工作目录 |
-| `picoclaw agent -m "你好"` | 单次对话 |
-| `picoclaw agent` | 交互式对话模式 |
-| `picoclaw gateway` | 启动网关（用于聊天应用） |
-| `picoclaw status` | 显示状态 |
-| `picoclaw cron list` | 列出所有定时任务 |
-| `picoclaw cron add ...` | 添加定时任务 |
-
-### Web UI `picoclaw-launcher` 参数说明
-
-| 参数 | 作用 | 示例 |
-| --- | --- | --- |
-| `-console` | 终端模式运行（不启用托盘 GUI），并在启动输出中打印登录提示/令牌来源 | `picoclaw-launcher -console` |
-| `-public` | 监听 `0.0.0.0`，允许局域网设备访问 WebUI | `picoclaw-launcher -public` |
-| `-no-browser` | 启动时不自动打开浏览器 | `picoclaw-launcher -no-browser` |
-| `-port &lt;port&gt;` | 指定端口（默认 `18800`） | `picoclaw-launcher -port 19999` |
-| `-lang &lt;en|zh&gt;` | 指定 UI 语言 | `picoclaw-launcher -lang zh` |
-| `[config.json]` | 可选：指定配置文件路径 | `picoclaw-launcher ./config.json` |
-
-常见组合：
-
-```bash
-# 无头服务器（SSH）常用：终端模式 + 不自动开浏览器 + 局域网访问
-picoclaw-launcher -console -no-browser -public
-
-# 自定义端口 + 指定配置文件
-picoclaw-launcher -port 19999 ./config.json
-```
+CLI 命令与 `picoclaw-launcher` 参数详见 [CLI 命令与参数](./configuration/cli-parameters.md)。
 
 ## 定时任务
 
@@ -222,24 +57,11 @@ PicoClaw 通过 `cron` 工具支持提醒和周期性任务：
 
 任务存储在 `~/.picoclaw/workspace/cron/` 目录下，自动处理。
 
-## 在 Android 上运行（Termux）
-
-让旧手机变身 AI 助手：
-
-```bash
-wget https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz
-tar xzf picoclaw_Linux_arm64.tar.gz
-pkg install proot
-termux-chroot ./picoclaw onboard
-```
-
-![PicoClaw 在 Termux 中运行](https://github.com/sipeed/picoclaw/raw/main/assets/termux.jpg)
-
 ## 故障排查
 
 ### 网络搜索显示“API 配置问题”
 
-如果还没配置搜索 API Key，这是正常现象。
+如果还没有配置搜索 API Key，这是正常现象。
 
 启用网络搜索：
 
@@ -249,7 +71,7 @@ termux-chroot ./picoclaw onboard
 
 ### 内容过滤错误
 
-某些提供商（如智谱 AI）有内容过滤，请尝试换一种表达方式或使用其他模型。
+某些提供商（如智谱）有内容过滤，请尝试更换表达方式或使用其他模型。
 
 ### Telegram 机器人提示 “Conflict: terminated by other getUpdates”
 
@@ -260,10 +82,10 @@ termux-chroot ./picoclaw onboard
 | 服务 | 免费额度 | 用途 |
 | --- | --- | --- |
 | **OpenRouter** | 每月 20 万 token | 多模型聚合（Claude、GPT-4 等） |
-| **火山引擎 CodingPlan** | 9.9 元/首月 | 适合国内用户，多种 SOTA 模型（豆包、DeepSeek 等） |
+| **火山引擎 CodingPlan** | 9.9 元首月 | 适合国内用户，多种 SOTA 模型（豆包、DeepSeek 等） |
 | **智谱 AI** | 每月 20 万 token | 适合国内用户 |
 | [**Baidu Search**](https://www.baidu.com/) | 单日 1000 次查询 | 更偏向国内内容 |
 | [**Brave Search**](https://brave.com/search/api) | 每月 2000 次查询 | 网络搜索功能 |
-| [**Tavily**](https://tavily.com) | 每月 1000 次查询 | AI Agent 搜索优化 |
+| [**Tavily**](https://tavily.com) | 每月 1000 次查询 | AI Agent 优化搜索 |
 | **Groq** | 提供免费层级 | 极速推理（Llama、Mixtral） |
 | **Cerebras** | 提供免费层级 | 极速推理（Llama、Qwen） |
