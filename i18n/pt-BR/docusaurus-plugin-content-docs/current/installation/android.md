@@ -20,19 +20,6 @@ Este guia mostra como instalar o PicoClaw no Android.
 
 ![Install](/img/installation/android1.png)
 
-## Rodar no Android (Termux, opcional)
-
-Se preferir executar pelo Termux, também é possível usar o método abaixo:
-
-```bash
-wget https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz
-tar xzf picoclaw_Linux_arm64.tar.gz
-pkg install proot
-termux-chroot ./picoclaw onboard
-```
-
-![PicoClaw rodando no Termux](https://github.com/sipeed/picoclaw/raw/main/assets/termux.jpg)
-
 ## Inicie o PicoClaw
 
 Após a instalação, toque no ícone do PicoClaw para abrir o aplicativo e, em seguida, toque no botão "Start Service" para iniciar o serviço.
@@ -48,6 +35,19 @@ http://127.0.0.1:18800
 
 - Se precisar acessar a Web UI do PicoClaw externamente, habilite o Public Mode nas configurações.
 ![Settings](/img/installation/android4.png)
+
+## Rodar no Android Termux (opcional)
+
+Se preferir executar pelo Termux, também é possível usar o método abaixo:
+
+```bash
+wget https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz
+tar xzf picoclaw_Linux_arm64.tar.gz
+pkg install proot
+termux-chroot ./picoclaw onboard
+```
+
+![PicoClaw rodando no Termux](https://github.com/sipeed/picoclaw/raw/main/assets/termux.jpg)
 
 ## Problemas conhecidos
 

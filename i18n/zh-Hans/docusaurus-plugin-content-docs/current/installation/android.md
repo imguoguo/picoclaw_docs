@@ -20,18 +20,6 @@ PicoClaw提供了安卓版本的安装包，您可以在 android 系统上安装
 
 ![解压](/img/installation/android1.png)
 
-## 在 Android 上运行（Termux，可选）
-
-如果你更希望通过 Termux 运行，也可以使用以下方式：
-
-```bash
-wget https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz
-tar xzf picoclaw_Linux_arm64.tar.gz
-pkg install proot
-termux-chroot ./picoclaw onboard
-```
-
-![PicoClaw 在 Termux 中运行](https://github.com/sipeed/picoclaw/raw/main/assets/termux.jpg)
 
 ## 启动 PicoClaw
 
@@ -49,6 +37,19 @@ http://127.0.0.1:18800
 
 - 如果需要在外部访问 PicoClaw 的 Web UI，需要在设置中打开公共模式。
 ![safariset](/img/installation/android4.png)
+
+## 在 Android Termux 上运行 (可选)
+
+如果你更希望通过 Termux 运行，也可以使用以下方式：
+
+```bash
+wget https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz
+tar xzf picoclaw_Linux_arm64.tar.gz
+pkg install proot
+termux-chroot ./picoclaw onboard
+```
+
+![PicoClaw 在 Termux 中运行](https://github.com/sipeed/picoclaw/raw/main/assets/termux.jpg)
 
 ## 已知问题
 
