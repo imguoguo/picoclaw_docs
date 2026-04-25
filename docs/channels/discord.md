@@ -10,7 +10,7 @@ title: Discord
 ### 1. Create a Bot
 
 - Go to [discord.com/developers/applications](https://discord.com/developers/applications)
-- Create an application -> Bot -> Add Bot
+- Create an application → Bot → Add Bot
 - Copy the bot token
 
 ### 2. Enable Intents
@@ -19,8 +19,8 @@ title: Discord
 
 ### 3. Get Your User ID
 
-- Discord Settings -> Advanced -> enable **Developer Mode**
-- Right-click your avatar -> **Copy User ID**
+- Discord Settings → Advanced → enable **Developer Mode**
+- Right-click your avatar → **Copy User ID**
 
 ### 4. Configure
 
@@ -79,7 +79,7 @@ Edit `~/.picoclaw/config.json`:
 
 ### 5. Invite the Bot
 
-- OAuth2 -> URL Generator
+- OAuth2 → URL Generator
 - Scopes: `bot`
 - Bot Permissions: `Send Messages`, `Read Message History`
 - Open the generated invite URL and add the bot to your server
@@ -92,7 +92,7 @@ picoclaw gateway
 
 ## Group Trigger
 
-Control how the bot responds in server channels (does not affect DMs; the bot always responds in DMs):
+Control how the bot responds in server channels (does not affect DMs — the bot always responds in DMs):
 
 ```json
 {

@@ -1,37 +1,37 @@
 ---
 id: dingtalk
-title: DingTalk
+title: DingTalk (钉钉)
 ---
 
 # DingTalk
 
-O DingTalk e a plataforma de comunicacao corporativa da Alibaba, amplamente usada em ambientes de trabalho chineses. O PicoClaw usa o SDK do **Stream Mode** do DingTalk, que mantem uma conexao WebSocket persistente sem precisar de IP publico nem configuracao de webhook.
+O DingTalk é a plataforma de comunicação corporativa da Alibaba, amplamente usada em ambientes de trabalho chineses. O PicoClaw usa o SDK do **Stream Mode** do DingTalk, que mantém uma conexão WebSocket persistente — sem necessidade de IP público nem configuração de webhook.
 
-## Configuracao
+## Configuração
 
 ### 1. Criar um App Interno
 
 1. Acesse a [Plataforma Aberta do DingTalk](https://open.dingtalk.com/)
-2. Clique em **Application Development** -> **Enterprise Internal Development** -> **Create Application**
-3. Preencha o nome e a descricao do app
+2. Clique em **Application Development** → **Enterprise Internal Development** → **Create Application**
+3. Preencha o nome e a descrição do app
 
 ### 2. Obter Credenciais
 
-1. Va em **Credentials & Basic Info** nas configuracoes do seu app
+1. Vá em **Credentials & Basic Info** nas configurações do seu app
 2. Copie o **Client ID** (AppKey) e o **Client Secret** (AppSecret)
 
-### 3. Ativar o Recurso de Robo
+### 3. Ativar o Recurso de Robô
 
-1. Va em **App Features** -> **Robot**
-2. Ative o recurso de robo
-3. O robo funciona tanto em **chats de grupo** quanto em **chats privados**
+1. Vá em **App Features** → **Robot**
+2. Ative o recurso de robô
+3. O robô funciona tanto em **chats de grupo** quanto em **chats privados**
 
-### 4. Configurar Permissoes
+### 4. Configurar Permissões
 
-Em **Permissions & Scopes**, garanta que as seguintes permissoes estejam concedidas:
+Em **Permissions & Scopes**, garanta que as seguintes permissões estejam concedidas:
 
-- Receber mensagens
-- Enviar mensagens
+- Receber mensagens (para receber mensagens dos usuários)
+- Enviar mensagens (para enviar respostas do bot)
 
 ### 5. Configurar o PicoClaw
 
@@ -79,41 +79,41 @@ Edite `~/.picoclaw/config.json`:
 picoclaw gateway
 ```
 
-## Referencia de Campos
+## Referência de Campos
 
-| Campo | Tipo | Obrigatorio | Descricao |
+| Campo | Tipo | Obrigatório | Descrição |
 | --- | --- | --- | --- |
 | `client_id` | string | Sim | Client ID do app DingTalk (AppKey) |
 | `client_secret` | string | Sim | Client Secret do app DingTalk (AppSecret) |
-| `allow_from` | array | Nao | Lista branca de IDs de usuarios do DingTalk (vazio = permitir todos) |
-| `group_trigger` | object | Nao | Configuracoes de acionamento em chat de grupo (veja [Campos Comuns dos Canais](../#common-channel-fields)) |
-| `reasoning_channel_id` | string | Nao | Direcionar a saida de raciocinio para um chat separado |
+| `allow_from` | array | Não | Whitelist de IDs de usuários DingTalk (vazio = permitir todos) |
+| `group_trigger` | object | Não | Configurações de acionamento em chat de grupo (veja [Campos Comuns dos Canais](../#common-channel-fields)) |
+| `reasoning_channel_id` | string | Não | Direcionar a saída de raciocínio para um chat separado |
 
 ## Como Funciona
 
 ### Stream Mode
 
-O Stream Mode do DingTalk usa uma conexao WebSocket persistente mantida pelo SDK:
+O Stream Mode do DingTalk usa uma conexão WebSocket persistente mantida pelo SDK:
 
-- **Nao precisa de IP publico**: o SDK se conecta de forma outbound aos servidores do DingTalk
-- **Reconexao automatica**: o SDK lida com desconexoes e reconecta automaticamente
-- **Entrega em tempo real**: as mensagens sao entregues instantaneamente pelo canal WebSocket
+- **Não precisa de IP público**: o SDK conecta-se de forma outbound aos servidores do DingTalk
+- **Reconexão automática**: o SDK lida com desconexões e reconecta automaticamente
+- **Entrega em tempo real**: as mensagens são entregues instantaneamente pelo canal WebSocket
 
 ### Tratamento de Mensagens
 
-- **Chats privados**: As mensagens sao recebidas diretamente
-- **Chats de grupo**: O bot responde quando e @mencionado (configuravel via `group_trigger`)
+- **Chats privados**: As mensagens são recebidas diretamente
+- **Chats de grupo**: O bot responde quando é @mencionado (configurável via `group_trigger`)
 - **Session Webhook**: Cada mensagem recebida traz uma URL `sessionWebhook` para respostas diretas
-- **Tamanho maximo da mensagem**: 20.000 caracteres por mensagem (respostas mais longas sao truncadas automaticamente)
+- **Tamanho máximo da mensagem**: 20.000 caracteres por mensagem (respostas mais longas são automaticamente truncadas)
 
-### Tratamento de Mencoes em Grupos
+### Tratamento de Menções em Grupos
 
-Quando o bot e @mencionado em um chat de grupo, o PicoClaw remove automaticamente as tags `@mention` iniciais da mensagem antes de passa-la ao agente. Isso garante que o agente receba o texto de entrada limpo, sem o prefixo `@BotName`. O bot usa o campo `IsInAtList` do DingTalk para detectar com confianca se foi mencionado, em vez de analisar o texto manualmente.
+Quando o bot é @mencionado em um chat de grupo, o PicoClaw remove automaticamente as tags `@mention` iniciais da mensagem antes de passá-la ao agente. Isso garante que o agente receba o texto de entrada limpo, sem o prefixo `@BotName`. O bot usa o campo `IsInAtList` do DingTalk para detectar de forma confiável se foi mencionado, em vez de analisar o texto manualmente.
 
 ### Grupo vs. Chat Privado
 
 | Recurso | Chat Privado | Chat de Grupo |
 | --- | --- | --- |
-| Gatilho | Qualquer mensagem | @mencao por padrao |
+| Gatilho | Qualquer mensagem | @menção por padrão |
 | Resposta | Resposta direta | Resposta via session webhook |
-| Contexto | Sessao por usuario | Sessao por grupo |
+| Contexto | Sessão por usuário | Sessão por grupo |

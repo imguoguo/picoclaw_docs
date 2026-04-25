@@ -1,18 +1,18 @@
 ---
 id: dingtalk
-title: DingTalk (DingDing)
+title: DingTalk (钉钉)
 ---
 
 # DingTalk
 
-DingTalk is Alibaba's enterprise communication platform, widely used in Chinese workplaces. PicoClaw uses DingTalk's **Stream Mode** SDK, which maintains a persistent WebSocket connection without requiring a public IP or webhook configuration.
+DingTalk is Alibaba's enterprise communication platform, widely used in Chinese workplaces. PicoClaw uses DingTalk's **Stream Mode** SDK, which maintains a persistent WebSocket connection — no public IP or webhook configuration needed.
 
 ## Setup
 
 ### 1. Create an Internal App
 
 1. Go to [DingTalk Open Platform](https://open.dingtalk.com/)
-2. Click **Application Development** -> **Enterprise Internal Development** -> **Create Application**
+2. Click **Application Development** → **Enterprise Internal Development** → **Create Application**
 3. Fill in the app name and description
 
 ### 2. Get Credentials
@@ -22,7 +22,7 @@ DingTalk is Alibaba's enterprise communication platform, widely used in Chinese 
 
 ### 3. Enable Robot Capability
 
-1. Go to **App Features** -> **Robot**
+1. Go to **App Features** → **Robot**
 2. Enable the robot capability
 3. The robot can work in both **group chats** and **private chats**
 
@@ -30,8 +30,8 @@ DingTalk is Alibaba's enterprise communication platform, widely used in Chinese 
 
 In **Permissions & Scopes**, ensure the following permissions are granted:
 
-- Receive messages
-- Send messages
+- Receive messages (for receiving user messages)
+- Send messages (for sending bot replies)
 
 ### 5. Configure PicoClaw
 
@@ -81,13 +81,13 @@ picoclaw gateway
 
 ## Field Reference
 
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `client_id` | string | Yes | DingTalk app Client ID (AppKey) |
-| `client_secret` | string | Yes | DingTalk app Client Secret (AppSecret) |
-| `allow_from` | array | No | DingTalk user ID whitelist (empty = allow all) |
-| `group_trigger` | object | No | Group chat trigger settings (see [Common Channel Fields](../#common-channel-fields)) |
-| `reasoning_channel_id` | string | No | Route reasoning output to a separate chat |
+| Field                    | Type   | Required | Description                                                                      |
+| ------------------------ | ------ | -------- | -------------------------------------------------------------------------------- |
+| `client_id`            | string | Yes      | DingTalk app Client ID (AppKey)                                                  |
+| `client_secret`        | string | Yes      | DingTalk app Client Secret (AppSecret)                                           |
+| `allow_from`           | array  | No       | DingTalk user ID whitelist (empty = allow all)                                   |
+| `group_trigger`        | object | No       | Group chat trigger settings (see[Common Channel Fields](../#common-channel-fields)) |
+| `reasoning_channel_id` | string | No       | Route reasoning output to a separate chat                                        |
 
 ## How It Works
 
@@ -95,9 +95,9 @@ picoclaw gateway
 
 DingTalk Stream Mode uses a persistent WebSocket connection maintained by the SDK:
 
-- **No public IP needed**: the SDK connects outbound to DingTalk servers
-- **Automatic reconnection**: the SDK handles disconnections and reconnects automatically
-- **Real-time delivery**: messages are pushed instantly via the WebSocket channel
+- **No public IP needed** — the SDK connects outbound to DingTalk servers
+- **Automatic reconnection** — the SDK handles disconnections and reconnects automatically
+- **Real-time delivery** — messages are pushed instantly via the WebSocket channel
 
 ### Message Handling
 
@@ -112,8 +112,8 @@ When the bot is @-mentioned in a group chat, PicoClaw automatically strips leadi
 
 ### Group vs Private Chat
 
-| Feature | Private Chat | Group Chat |
-| --- | --- | --- |
-| Trigger | Any message | @mention by default |
-| Reply | Direct response | Reply via session webhook |
-| Context | Per-user session | Per-group session |
+| Feature | Private Chat     | Group Chat                |
+| ------- | ---------------- | ------------------------- |
+| Trigger | Any message      | @mention by default       |
+| Reply   | Direct response  | Reply via session webhook |
+| Context | Per-user session | Per-group session         |
