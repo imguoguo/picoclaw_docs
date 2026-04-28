@@ -1,7 +1,7 @@
 {
   "source_repo": "https://github.com/sipeed/picoclaw",
-  "source_commit": "5e44a994",
-  "generated_at": "2026-04-09T16:30:00+08:00",
+  "source_commit": "fc246769",
+  "generated_at": "2026-04-28T08:23:13.237Z",
   "docs": {
     "docs/intro.md": {
       "source_files": ["README.md", "assets/arch.jpg"]
@@ -74,6 +74,15 @@
     },
     "docs/channels/teams-webhook.md": {
       "source_files": ["pkg/channels/teams_webhook/teams_webhook.go", "pkg/channels/teams_webhook/init.go", "pkg/config/config.go"]
+    },
+    "docs/channels/irc.md": {
+      "source_files": ["pkg/channels/irc/irc.go", "pkg/channels/irc/handler.go", "pkg/channels/irc/init.go", "pkg/config/config.go"]
+    },
+    "docs/channels/pico.md": {
+      "source_files": ["pkg/channels/pico/pico.go", "pkg/channels/pico/client.go", "pkg/channels/pico/protocol.go", "pkg/channels/pico/init.go", "pkg/config/config.go"]
+    },
+    "docs/channels/whatsapp_native.md": {
+      "source_files": ["pkg/channels/whatsapp_native/whatsapp_native.go", "pkg/channels/whatsapp_native/init.go", "pkg/channels/whatsapp/whatsapp.go", "pkg/config/config.go"]
     },
     "docs/configuration/isolation.md": {
       "source_files": ["pkg/isolation/README.md", "pkg/isolation/README_CN.md", "pkg/isolation/runtime.go", "pkg/isolation/platform_linux.go", "pkg/isolation/platform_windows.go", "pkg/config/config.go"]
