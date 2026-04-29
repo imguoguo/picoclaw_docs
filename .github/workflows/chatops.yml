@@ -137,16 +137,22 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage any uncommitted changes Codex left in the working tree
           git add -A
           git reset -- picoclaw-upstream .codex 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          git commit -m "fix: apply requested changes via /fix command
+          if ! git diff --cached --quiet; then
+            git commit -m "fix: apply requested changes via /fix command
 
           Co-Authored-By: Codex <noreply@openai.com>"
-          git push origin "$BRANCH"
+          fi
+
+          # Push if there are any commits ahead of remote (Codex may have committed directly)
+          if [ -n "$(git log "origin/$BRANCH..HEAD" --oneline 2>/dev/null)" ]; then
+            git push origin HEAD:"$BRANCH" --force-with-lease
+          else
+            echo "No changes to push"
+          fi
 
       - name: Comment result
         if: always()
