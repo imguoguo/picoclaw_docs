@@ -71,7 +71,7 @@ type ProvidersConfig struct {
 参考 [LiteLLM](https://docs.litellm.ai/docs/proxy/configs) 设计理念：
 
 1. **以模型为中心**：用户关心的是模型，而不是提供商
-2. **协议前缀**：使用 `协议/模型名` 格式，如 `openai/gpt-5.2`、`anthropic/claude-sonnet-4.6`
+2. **协议前缀**：使用 `协议/模型名` 格式，如 `openai/gpt-5.4`、`anthropic/claude-sonnet-4.6`
 3. **配置驱动**：添加新 Provider 只需修改配置，无需改代码
 
 ### 2.2 新配置结构
@@ -86,8 +86,8 @@ type ProvidersConfig struct {
       "api_key": "sk-xxx"
     },
     {
-      "model_name": "gpt-5.2",
-      "model": "openai/gpt-5.2",
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
       "api_key": "sk-xxx"
     },
     {
@@ -132,7 +132,7 @@ type Config struct {
 type ModelConfig struct {
     // 必填
     ModelName string `json:"model_name"`  // 用户侧别名
-    Model     string `json:"model"`       // 协议/模型，如 openai/gpt-5.2
+    Model     string `json:"model"`       // 协议/模型，如 openai/gpt-5.4
 
     // 通用配置
     APIBase   string `json:"api_base,omitempty"`
@@ -183,7 +183,7 @@ type ModelConfig struct {
       "model": "deepseek-chat"
     },
     "coder": {
-      "model": "gpt-5.2",
+      "model": "gpt-5.4",
       "system_prompt": "You are a coding assistant..."
     },
     "translator": {
@@ -203,7 +203,7 @@ type ModelConfig struct {
 model_list:
   - model_name: gpt-4o
     litellm_params:
-      model: openai/gpt-5.2
+      model: openai/gpt-5.4
       api_key: xxx
   - model_name: my-custom
     litellm_params:

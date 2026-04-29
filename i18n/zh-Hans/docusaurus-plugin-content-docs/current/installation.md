@@ -14,6 +14,7 @@ title: 安装
 | 🐧 Linux | x86_64 | [picoclaw_Linux_x86_64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_x86_64.tar.gz) |
 | 🐧 Linux | ARM64 | [picoclaw_Linux_arm64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz) |
 | 🐧 Linux | ARMv6（32 位）| [picoclaw_Linux_armv6.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_armv6.tar.gz) |
+| 🐧 Linux | ARMv7（32 位） | [picoclaw_Linux_armv7.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_armv7.tar.gz) |
 | 🐧 Linux | RISC-V 64 | [picoclaw_Linux_riscv64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_riscv64.tar.gz) |
 | 🐧 Linux | LoongArch64 | [picoclaw_Linux_loong64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_loong64.tar.gz) |
 | 🍎 macOS | ARM64 (Apple Silicon) | [picoclaw_Darwin_arm64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Darwin_arm64.tar.gz) |
@@ -61,23 +62,45 @@ make install
 git clone https://github.com/sipeed/picoclaw.git
 cd picoclaw
 
-# 2. 配置 API Key
-cp config/config.example.json config/config.json
-vim config/config.json
+# 2. 首次运行 — 自动生成 docker/data/config.json 后退出
+docker compose -f docker/docker-compose.yml --profile gateway up
+# 容器打印 "First-run setup complete." 后停止
 
-# 3. 构建并启动
-docker compose --profile gateway up -d
+# 3. 设置 API Key
+vim docker/data/config.json   # 设置提供商 API Key、机器人令牌等
 
-# 4. 查看日志
-docker compose logs -f picoclaw-gateway
-
-# 5. 停止
-docker compose --profile gateway down
+# 4. 启动
+docker compose -f docker/docker-compose.yml --profile gateway up -d
 ```
 
 :::tip Docker 网络配置
 默认情况下，Gateway 监听 `127.0.0.1`。如需从外部访问，请在环境变量或 config.json 中设置 `PICOCLAW_GATEWAY_HOST=0.0.0.0`。
 :::
+
+```bash
+# 5. 查看日志
+docker compose -f docker/docker-compose.yml logs -f picoclaw-gateway
+
+# 6. 停止
+docker compose -f docker/docker-compose.yml --profile gateway down
+```
+
+### Docker: Agent 模式
+
+```bash
+# 提问
+docker compose -f docker/docker-compose.yml run --rm picoclaw-agent -m "2+2=?"
+
+# 交互模式
+docker compose -f docker/docker-compose.yml run --rm picoclaw-agent
+```
+
+### Docker: 更新
+
+```bash
+docker compose -f docker/docker-compose.yml pull
+docker compose -f docker/docker-compose.yml --profile gateway up -d
+```
 
 ## 低成本硬件部署
 
@@ -102,10 +125,10 @@ PicoClaw 可以运行在几乎任何 Linux 设备上：
 | Pi 4 B | ARM64 | [picoclaw_Linux_arm64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz) | Raspberry Pi OS Lite（64 位）|
 | Pi 5 | ARM64 | [picoclaw_Linux_arm64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz) | Raspberry Pi OS Lite（64 位）|
 
-> Pi 2 B 使用 ARMv7，暂不支持。
+<!-- > Pi 2 B 使用 ARMv7，暂不支持。 -->
 
 ## 下一步
 
-- [快速开始](./getting-started) — 配置并运行第一次对话
-- [配置说明](./configuration) — 完整配置参考
-- [聊天通道](./channels) — 接入 Telegram、Discord 等
+- [快速开始](./getting-started.md) — 配置并运行第一次对话
+- [配置说明](./configuration/index.md) — 完整配置参考
+- [聊天通道](./channels/index.md) — 接入 Telegram、Discord 等

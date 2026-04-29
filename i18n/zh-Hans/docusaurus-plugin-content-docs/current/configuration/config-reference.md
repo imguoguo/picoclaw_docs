@@ -7,13 +7,21 @@ title: 完整配置参考
 
 完整带注释的 `config.json` 示例。可从仓库中复制 `config/config.example.json`。
 
+这里的 `"version": 2` 指的是**配置 schema 版本 2**，不代表软件发布版本号。
+
+日常模型管理推荐优先使用 Web UI；手动编辑 JSON 更适合自动化模板和高级部署场景。
+
+![Web UI 模型配置](/img/providers/webuimodel.png)
+
 ```json
 {
+  "version": 2,
+
   "agents": {
     "defaults": {
       "workspace": "~/.picoclaw/workspace",
       "restrict_to_workspace": true,
-      "model_name": "gpt4",
+      "model_name": "gpt-5.4",
       "max_tokens": 32768,
       "max_tool_iterations": 50
     }
@@ -21,15 +29,20 @@ title: 完整配置参考
 
   "model_list": [
     {
-      "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
-      "api_key": "sk-your-openai-key",
+      "model_name": "ark-code-latest",
+      "model": "volcengine/ark-code-latest",
+      "api_keys": ["sk-your-volcengine-key"]
+    },
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
+      "api_keys": ["sk-your-openai-key"],
       "api_base": "https://api.openai.com/v1"
     },
     {
       "model_name": "claude-sonnet-4.6",
       "model": "anthropic/claude-sonnet-4.6",
-      "api_key": "sk-ant-your-key",
+      "api_keys": ["sk-ant-your-key"],
       "api_base": "https://api.anthropic.com/v1"
     },
     {
@@ -40,18 +53,18 @@ title: 完整配置参考
     {
       "model_name": "deepseek",
       "model": "deepseek/deepseek-chat",
-      "api_key": "sk-your-deepseek-key"
+      "api_keys": ["sk-your-deepseek-key"]
     },
     {
-      "model_name": "loadbalanced-gpt4",
-      "model": "openai/gpt-5.2",
-      "api_key": "sk-key1",
+      "model_name": "loadbalanced-gpt-5.4",
+      "model": "openai/gpt-5.4",
+      "api_keys": ["sk-key1"],
       "api_base": "https://api1.example.com/v1"
     },
     {
-      "model_name": "loadbalanced-gpt4",
-      "model": "openai/gpt-5.2",
-      "api_key": "sk-key2",
+      "model_name": "loadbalanced-gpt-5.4",
+      "model": "openai/gpt-5.4",
+      "api_keys": ["sk-key2"],
       "api_base": "https://api2.example.com/v1"
     }
   ],
@@ -139,33 +152,28 @@ title: 完整配置参考
     },
     "wecom": {
       "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY",
-      "webhook_path": "/webhook/wecom",
+      "bot_id": "YOUR_BOT_ID",
+      "secret": "YOUR_SECRET",
+      "websocket_url": "wss://openws.work.weixin.qq.com",
+      "send_thinking_message": true,
       "allow_from": [],
-      "reply_timeout": 5,
       "reasoning_channel_id": ""
     },
-    "wecom_app": {
+    "matrix": {
       "enabled": false,
-      "corp_id": "YOUR_CORP_ID",
-      "corp_secret": "YOUR_CORP_SECRET",
-      "agent_id": 1000002,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-app",
+      "homeserver": "https://matrix.org",
+      "user_id": "@your-bot:matrix.org",
+      "access_token": "YOUR_MATRIX_ACCESS_TOKEN",
+      "device_id": "",
+      "join_on_invite": true,
       "allow_from": [],
-      "reply_timeout": 5,
-      "reasoning_channel_id": ""
-    },
-    "wecom_aibot": {
-      "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-aibot",
-      "max_steps": 10,
-      "welcome_message": "你好！我是你的 AI 助手，有什么可以帮你的吗？",
+      "group_trigger": {
+        "mention_only": true
+      },
+      "placeholder": {
+        "enabled": true,
+        "text": "正在思考..."
+      },
       "reasoning_channel_id": ""
     }
   },
@@ -174,7 +182,7 @@ title: 完整配置参考
     "web": {
       "brave": {
         "enabled": false,
-        "api_key": "YOUR_BRAVE_API_KEY",
+        "api_keys": ["YOUR_BRAVE_API_KEY"],
         "max_results": 5
       },
       "duckduckgo": {
@@ -183,7 +191,7 @@ title: 完整配置参考
       },
       "perplexity": {
         "enabled": false,
-        "api_key": "pplx-xxx",
+        "api_keys": ["pplx-xxx"],
         "max_results": 5
       },
       "proxy": ""
@@ -242,12 +250,19 @@ title: 完整配置参考
 
   "gateway": {
     "host": "127.0.0.1",
-    "port": 18790
+    "port": 18790,
+    "log_level": "warn"
   }
 }
 ```
 
 ## 字段说明
+
+### `version`
+
+| 字段 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `version` | int | `0` | 配置架构版本。当前版本为 `2`。新配置应设置为 `2`。 |
 
 ### `agents.defaults`
 
@@ -265,22 +280,42 @@ title: 完整配置参考
 | `max_media_size` | int | 20971520 | 最大媒体文件大小（字节），默认 20MB |
 | `image_model` | string | — | 图片生成使用的模型名 |
 | `image_model_fallbacks` | array | [] | 图片生成备用模型 |
+| `routing` | object | — | 智能模型路由设置（见下方） |
+
+#### `routing`
+
+| 字段 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `enabled` | bool | `false` | 启用智能模型路由 |
+| `light_model` | string | — | 用于简单任务的模型名（需在 `model_list` 中存在） |
+| `threshold` | float | — | 复杂度评分阈值 [0,1]；评分 >= 阈值使用主模型，低于阈值使用 `light_model` |
+
+启用后，PicoClaw 会根据消息的结构特征（长度、代码块、工具调用历史、对话深度、附件）对每条消息评分，将简单消息路由到更轻量/低成本的模型。
 
 ### `model_list[]`
 
 | 字段 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
 | `model_name` | string | 是 | 别名（在 `agents.defaults.model_name` 中引用） |
-| `model` | string | 是 | `vendor/model-id` 格式 |
-| `api_key` | string | 视情况 | 提供商 API Key |
+| `model` | string | 是 | `vendor/model-id` 格式。前导 `vendor/` 仅用于协议与默认 `api_base` 识别，不会原样发送给上游。 |
+| `api_keys` | array | 视情况 | API 认证密钥（数组；支持多个密钥用于负载均衡）。基于 HTTP 的提供商必填，除非 `api_base` 指向本地服务。 |
 | `api_base` | string | 否 | 覆盖默认 API 地址 |
+| `enabled` | bool | 否 | 该模型条目是否启用。迁移期间默认为 `true`（有 API 密钥或名为 `local-model` 的模型自动启用）。设为 `false` 可禁用模型但不删除配置。 |
 | `auth_method` | string | 否 | 认证方式（如 `oauth`） |
 | `proxy` | string | 否 | 该模型的 HTTP/SOCKS 代理 |
-| `request_timeout` | int | 否 | 请求超时时间（秒），默认 120 |
+| `request_timeout` | int | 否 | 请求超时时间（秒）；`<=0` 使用默认值 120s |
 | `rpm` | int | 否 | 速率限制（每分钟请求数） |
 | `max_tokens_field` | string | 否 | 覆盖 API 请求中的 max tokens 字段名 |
 | `connect_mode` | string | 否 | 连接模式覆盖 |
 | `workspace` | string | 否 | 模型级工作目录覆盖 |
+| `thinking_level` | string | 否 | 扩展思考级别：`off`、`low`、`medium`、`high`、`xhigh` 或 `adaptive` |
+| `fallbacks` | array | 否 | 故障转移备用模型名 |
+| `extra_body` | object | 否 | 注入 API 请求体的额外字段 |
+| `custom_headers` | object | 否 | 注入到该 provider 每次请求的额外 HTTP 头（仅 HTTP 类 provider 有效） |
+
+:::note Schema V2 中 API Key 行为
+在配置 schema V2 中，`config.json` 的 `model_list[].api_key` 会被忽略。请使用 `api_keys`，并优先将真实密钥写入 `.security.yml`。从 V0/V1 迁移时，旧的 `api_key` 与 `api_keys` 会自动合并为 `api_keys`。API 密钥支持 `SecureString` 格式：明文、`enc://<base64>`、`file://<path>`。详见[凭证加密](../credential-encryption.md)。
+:::
 
 ### `gateway`
 
@@ -288,6 +323,8 @@ title: 完整配置参考
 | --- | --- | --- | --- |
 | `host` | string | `127.0.0.1` | 网关监听地址 |
 | `port` | int | 18790 | 网关监听端口 |
+| `log_level` | string | `warn` | 日志详细程度：`debug`、`info`、`warn`、`error`、`fatal`。也可通过 `PICOCLAW_LOG_LEVEL` 环境变量设置。 |
+| `hot_reload` | bool | `false` | 启用配置热重载 |
 
 设置 `host: "0.0.0.0"` 可让网关对外开放。
 
@@ -301,6 +338,8 @@ title: 完整配置参考
 | `allow_from` | array | 允许使用机器人的用户 ID（空数组 = 允许所有人） |
 | `reasoning_channel_id` | string | 专用于输出推理过程的频道/群组 ID |
 | `group_trigger` | object | 群聊触发设置（见下方） |
+| `placeholder` | object | 占位消息设置（见下方） |
+| `typing` | object | 输入状态指示器设置（见下方） |
 
 #### `group_trigger`
 
@@ -308,3 +347,39 @@ title: 完整配置参考
 | --- | --- | --- |
 | `mention_only` | bool | 仅在群聊中被 @ 时响应 |
 | `prefixes` | array | 群聊中触发机器人的关键词前缀 |
+
+#### `placeholder`
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `enabled` | bool | 启用占位消息 |
+| `text` | string | 处理期间显示的占位文本（如"正在思考..."） |
+
+支持的通道：飞书、Slack、Matrix。
+
+#### `typing`
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `enabled` | bool | 处理期间显示"正在输入"状态 |
+
+支持的通道：Slack、Matrix。
+
+## 安全配置
+
+### .security.yml 文件
+
+PicoClaw 支持专用的 `.security.yml` 文件来存储敏感凭证（API 密钥、令牌、密钥）。该文件与当前生效的 `config.json` 位于同一目录（如果使用 `PICOCLAW_CONFIG` 指定了自定义配置路径，也遵循该目录）。
+
+### 密钥优先级顺序
+
+解析凭证时，PicoClaw 按以下顺序应用值：
+
+1. **环境变量**：最高优先级（`env.Parse` 在文件加载后执行）
+2. **.security.yml**：覆盖 `config.json` 中同路径字段
+3. **config.json**：基础值
+
+对于 schema V2 的 `model_list`，`config.json` 中的 `api_key` 会被忽略，请使用 `.security.yml` + `api_keys`。
+
+关于 `.security.yml` 的字段路径、映射规则和完整示例，请参考[`.security.yml 配置参考`](./security-reference.md)。
+

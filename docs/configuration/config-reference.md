@@ -7,13 +7,21 @@ title: Full Configuration Reference
 
 Complete annotated `config.json` example. Copy from `config/config.example.json` in the repository.
 
+`"version": 2` here means **config schema version 2**, not a product release version.
+
+For day-to-day model management, Web UI is recommended. Use manual JSON editing for automation templates and advanced deployment workflows.
+
+![Web UI Model Setup](/img/providers/webuimodel.png)
+
 ```json
 {
+  "version": 2,
+
   "agents": {
     "defaults": {
       "workspace": "~/.picoclaw/workspace",
       "restrict_to_workspace": true,
-      "model_name": "gpt4",
+      "model_name": "gpt-5.4",
       "max_tokens": 32768,
       "max_tool_iterations": 50
     }
@@ -21,15 +29,20 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
 
   "model_list": [
     {
-      "model_name": "gpt4",
-      "model": "openai/gpt-5.2",
-      "api_key": "sk-your-openai-key",
+      "model_name": "ark-code-latest",
+      "model": "volcengine/ark-code-latest",
+      "api_keys": ["sk-your-volcengine-key"]
+    },
+    {
+      "model_name": "gpt-5.4",
+      "model": "openai/gpt-5.4",
+      "api_keys": ["sk-your-openai-key"],
       "api_base": "https://api.openai.com/v1"
     },
     {
       "model_name": "claude-sonnet-4.6",
       "model": "anthropic/claude-sonnet-4.6",
-      "api_key": "sk-ant-your-key",
+      "api_keys": ["sk-ant-your-key"],
       "api_base": "https://api.anthropic.com/v1"
     },
     {
@@ -40,18 +53,18 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
     {
       "model_name": "deepseek",
       "model": "deepseek/deepseek-chat",
-      "api_key": "sk-your-deepseek-key"
+      "api_keys": ["sk-your-deepseek-key"]
     },
     {
-      "model_name": "loadbalanced-gpt4",
-      "model": "openai/gpt-5.2",
-      "api_key": "sk-key1",
+      "model_name": "loadbalanced-gpt-5.4",
+      "model": "openai/gpt-5.4",
+      "api_keys": ["sk-key1"],
       "api_base": "https://api1.example.com/v1"
     },
     {
-      "model_name": "loadbalanced-gpt4",
-      "model": "openai/gpt-5.2",
-      "api_key": "sk-key2",
+      "model_name": "loadbalanced-gpt-5.4",
+      "model": "openai/gpt-5.4",
+      "api_keys": ["sk-key2"],
       "api_base": "https://api2.example.com/v1"
     }
   ],
@@ -139,33 +152,28 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
     },
     "wecom": {
       "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_url": "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY",
-      "webhook_path": "/webhook/wecom",
+      "bot_id": "YOUR_BOT_ID",
+      "secret": "YOUR_SECRET",
+      "websocket_url": "wss://openws.work.weixin.qq.com",
+      "send_thinking_message": true,
       "allow_from": [],
-      "reply_timeout": 5,
       "reasoning_channel_id": ""
     },
-    "wecom_app": {
+    "matrix": {
       "enabled": false,
-      "corp_id": "YOUR_CORP_ID",
-      "corp_secret": "YOUR_CORP_SECRET",
-      "agent_id": 1000002,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-app",
+      "homeserver": "https://matrix.org",
+      "user_id": "@your-bot:matrix.org",
+      "access_token": "YOUR_MATRIX_ACCESS_TOKEN",
+      "device_id": "",
+      "join_on_invite": true,
       "allow_from": [],
-      "reply_timeout": 5,
-      "reasoning_channel_id": ""
-    },
-    "wecom_aibot": {
-      "enabled": false,
-      "token": "YOUR_TOKEN",
-      "encoding_aes_key": "YOUR_43_CHAR_ENCODING_AES_KEY",
-      "webhook_path": "/webhook/wecom-aibot",
-      "max_steps": 10,
-      "welcome_message": "Hello! I'm your AI assistant. How can I help you today?",
+      "group_trigger": {
+        "mention_only": true
+      },
+      "placeholder": {
+        "enabled": true,
+        "text": "Thinking..."
+      },
       "reasoning_channel_id": ""
     }
   },
@@ -174,7 +182,7 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
     "web": {
       "brave": {
         "enabled": false,
-        "api_key": "YOUR_BRAVE_API_KEY",
+        "api_keys": ["YOUR_BRAVE_API_KEY"],
         "max_results": 5
       },
       "duckduckgo": {
@@ -183,7 +191,7 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
       },
       "perplexity": {
         "enabled": false,
-        "api_key": "pplx-xxx",
+        "api_keys": ["pplx-xxx"],
         "max_results": 5
       },
       "proxy": ""
@@ -242,12 +250,19 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
 
   "gateway": {
     "host": "127.0.0.1",
-    "port": 18790
+    "port": 18790,
+    "log_level": "warn"
   }
 }
 ```
 
 ## Field Reference
+
+### `version`
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `version` | int | `0` | Config schema version. Current version is `2`. New configs should set this to `2`. |
 
 ### `agents.defaults`
 
@@ -265,22 +280,42 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
 | `max_media_size` | int | 20971520 | Maximum media file size in bytes (default 20MB) |
 | `image_model` | string | — | Model name for image generation |
 | `image_model_fallbacks` | array | [] | Fallback image models |
+| `routing` | object | — | Intelligent model routing settings (see below) |
+
+#### `routing`
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `enabled` | bool | `false` | Enable intelligent model routing |
+| `light_model` | string | — | Model name (from `model_list`) to use for simple tasks |
+| `threshold` | float | — | Complexity score in [0,1]; messages scoring >= threshold use the primary model, below use `light_model` |
+
+When enabled, PicoClaw scores each incoming message against structural features (length, code blocks, tool call history, conversation depth, attachments) and routes simple messages to a lighter/cheaper model.
 
 ### `model_list[]`
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `model_name` | string | Yes | Alias used in `agents.defaults.model_name` |
-| `model` | string | Yes | `vendor/model-id` format |
-| `api_key` | string | Depends | API key for the provider |
+| `model` | string | Yes | `vendor/model-id` format. The leading `vendor/` is used only for protocol/API base resolution and is not sent upstream as-is. |
+| `api_keys` | array | Depends | API authentication keys (array; supports multiple keys for load balancing). Required for HTTP-based providers unless `api_base` points to a local server. |
 | `api_base` | string | No | Override default API base URL |
+| `enabled` | bool | No | Whether this model entry is active. Defaults to `true` during migration for models with API keys or named `local-model`. Set to `false` to disable a model without removing its configuration. |
 | `auth_method` | string | No | Authentication method (e.g., `oauth`) |
 | `proxy` | string | No | HTTP/SOCKS proxy for this model |
-| `request_timeout` | int | No | Request timeout in seconds (default: 120) |
+| `request_timeout` | int | No | Request timeout in seconds; `<=0` uses default 120s |
 | `rpm` | int | No | Rate limit (requests per minute) |
 | `max_tokens_field` | string | No | Override the max tokens field name in API requests |
 | `connect_mode` | string | No | Connection mode override |
 | `workspace` | string | No | Per-model workspace override |
+| `thinking_level` | string | No | Extended thinking level: `off`, `low`, `medium`, `high`, `xhigh`, or `adaptive` |
+| `fallbacks` | array | No | Fallback model names for failover |
+| `extra_body` | object | No | Additional fields to inject into the API request body |
+| `custom_headers` | object | No | Additional HTTP headers to inject into every request to this provider (HTTP-based providers only) |
+
+:::note API Key Behavior in Schema V2
+In config schema V2, `model_list[].api_key` in `config.json` is ignored. Use `api_keys` and prefer storing real credentials in `.security.yml`. During V0/V1 migration, legacy `api_key` and `api_keys` are merged into `api_keys` automatically. API keys can use `SecureString` formats: plaintext, `enc://<base64>`, or `file://<path>`. See [Credential Encryption](../credential-encryption.md).
+:::
 
 ### `gateway`
 
@@ -288,6 +323,8 @@ Complete annotated `config.json` example. Copy from `config/config.example.json`
 | --- | --- | --- | --- |
 | `host` | string | `127.0.0.1` | Gateway listen host |
 | `port` | int | 18790 | Gateway listen port |
+| `log_level` | string | `warn` | Log verbosity: `debug`, `info`, `warn`, `error`, `fatal`. Can also be set via `PICOCLAW_LOG_LEVEL` env var. |
+| `hot_reload` | bool | `false` | Enable hot-reload of config changes |
 
 Set `host: "0.0.0.0"` to make the gateway accessible from other devices.
 
@@ -301,6 +338,8 @@ All channels support these fields:
 | `allow_from` | array | User IDs allowed to use the bot (empty = allow all) |
 | `reasoning_channel_id` | string | Dedicated channel/chat ID for routing reasoning output |
 | `group_trigger` | object | Group chat trigger settings (see below) |
+| `placeholder` | object | Placeholder message settings (see below) |
+| `typing` | object | Typing indicator settings (see below) |
 
 #### `group_trigger`
 
@@ -308,3 +347,38 @@ All channels support these fields:
 | --- | --- | --- |
 | `mention_only` | bool | Only respond when @-mentioned in groups |
 | `prefixes` | array | Keyword prefixes that trigger the bot in groups |
+
+#### `placeholder`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `enabled` | bool | Enable placeholder messages |
+| `text` | string | Placeholder text shown while processing (e.g., "Thinking...") |
+
+Supported by: Feishu, Slack, Matrix.
+
+#### `typing`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `enabled` | bool | Show typing indicator while processing |
+
+Supported by: Slack, Matrix.
+
+## Security Configuration
+
+### .security.yml File
+
+PicoClaw supports a dedicated `.security.yml` file for sensitive credentials (API keys, tokens, secrets). It is loaded from the same directory as the active `config.json` (including custom paths set by `PICOCLAW_CONFIG`).
+
+### Key Priority Order
+
+When resolving credentials, PicoClaw applies values in this order:
+
+1. **Environment variables**: Highest priority (`env.Parse` runs after file loading)
+2. **.security.yml**: Overrides same-path values from `config.json`
+3. **config.json**: Base values
+
+For `model_list` in schema V2, `api_key` in `config.json` is ignored; use `.security.yml` + `api_keys`.
+
+For field-by-field `.security.yml` paths, mapping rules, and complete examples, see [`.security.yml Reference`](./security-reference.md).

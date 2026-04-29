@@ -48,14 +48,15 @@
   flex-wrap: wrap;
 }
 
-/* Stats bar */
-.statsBar {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin: 1rem 0;
-  flex-wrap: wrap;
-  font-size: 1.1rem;
-  font-weight: 600;
-  opacity: 0.9;
+.navbar__title .brand-pico {
+  color: #20567c;
+}
+.navbar__title .brand-claw {
+  color: #da5b4a;
+}
+[data-theme='dark'] .navbar__title .brand-pico {
+  color: #5ba3c9;
+}
+[data-theme='dark'] .navbar__title .brand-claw {
+  color: #e8806f;
 }

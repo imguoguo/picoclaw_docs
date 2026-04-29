@@ -126,10 +126,10 @@ PicoClaw runs on almost any Linux device:
 | Pi 4 B | ARM64 | [picoclaw_Linux_arm64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz) | Raspberry Pi OS Lite (64-bit) |
 | Pi 5 | ARM64 | [picoclaw_Linux_arm64.tar.gz](https://github.com/sipeed/picoclaw/releases/latest/download/picoclaw_Linux_arm64.tar.gz) | Raspberry Pi OS Lite (64-bit) |
 
-> Pi 2 B uses ARMv7 which is not currently supported.
+<!-- > Pi 2 B uses ARMv7 which is not currently supported. -->
 
 ## Next Steps
 
-- [Getting Started](./getting-started) — configure and run your first chat
-- [Configuration](./configuration) — full configuration reference
-- [Chat Channels](./channels) — connect to Telegram, Discord, and more
+- [Getting Started](./getting-started.md) — configure and run your first chat
+- [Configuration](./configuration/index.md) — full configuration reference
+- [Chat Channels](./channels/index.md) — connect to Telegram, Discord, and more

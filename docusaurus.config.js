@@ -9,15 +9,24 @@ const config = {
 
   url: 'https://docs.picoclaw.io',
   baseUrl: '/',
+  // Emit canonical URLs and a sitemap that match what GitHub Pages actually
+  // serves (path/index.html). Without this, GitHub Pages 301-redirects
+  // /docs/foo to /docs/foo/, which Google Search Console flags as
+  // "Page with redirect".
+  trailingSlash: true,
 
   organizationName: 'sipeed',
   projectName: 'picoclaw_docs',
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'zh-Hans'],
+    locales: ['en', 'zh-Hans', 'pt-BR'],
     localeConfigs: {
       en: {
         label: 'English',
@@ -28,9 +37,23 @@ const config = {
         label: '中文',
         direction: 'ltr',
         htmlLang: 'zh-CN',
+        // Pin the i18n folder path to "zh-Hans". Docusaurus 3.10 derives
+        // the default path from htmlLang ?? locale, which would otherwise
+        // make it "zh-CN" and silently ignore i18n/zh-Hans/.
+        path: 'zh-Hans',
+      },
+      'pt-BR': {
+        label: 'Português (Brasil)',
+        direction: 'ltr',
+        htmlLang: 'pt-BR',
       },
     },
   },
+
+  clientModules: [
+    require.resolve('./src/clientModules/localeRedirect.js'),
+    require.resolve('./src/clientModules/brandColor.js'),
+  ],
 
   presets: [
     [
@@ -52,12 +75,15 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/logo.jpg',
+      colorMode: {
+        respectPrefersColorScheme: true,
+      },
+      image: 'img/logo.webp',
       navbar: {
         title: 'PicoClaw',
         logo: {
           alt: 'PicoClaw Logo',
-          src: 'img/logo.jpg',
+          src: 'img/logo.png',
         },
         items: [
           {
@@ -65,6 +91,11 @@ const config = {
             sidebarId: 'mainSidebar',
             position: 'left',
             label: 'Docs',
+          },
+          {
+            href: 'https://picoclaw.io',
+            label: 'Website',
+            position: 'right',
           },
           {
             href: 'https://github.com/sipeed/picoclaw',
@@ -116,5 +147,18 @@ const config = {
       },
     }),
 };
+
+config.themes = [
+  [
+    require.resolve('@easyops-cn/docusaurus-search-local'),
+    /** @type {import("@easyops-cn/docusaurus-search-local").PluginOptions} */
+    ({
+      hashed: true,
+      language: ['en', 'zh', 'pt'],
+      indexBlog: false,
+      docsRouteBasePath: '/docs',
+    }),
+  ],
+];
 
 module.exports = config;
