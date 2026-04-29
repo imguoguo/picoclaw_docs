@@ -18,6 +18,9 @@ jobs:
       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    concurrency:
+      group: fix-pr-${{ github.event.issue.number }}
+      cancel-in-progress: false
 
     steps:
       - name: Get PR details
@@ -92,10 +95,6 @@ jobs:
 
       - name: Run Codex to fix
         uses: openai/codex-action@v1
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
-          REPO: ${{ github.repository }}
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           responses-api-endpoint: ${{ secrets.OPENAI_BASE_URL }}
@@ -110,7 +109,6 @@ jobs:
             - **Docs repo**: the current working directory (Docusaurus 3.x)
             - **Source repo**: `picoclaw-upstream/` directory (sipeed/picoclaw latest main)
             - Locales: en (`docs/`), zh-Hans (`i18n/zh-Hans/...`), pt-BR (`i18n/pt-BR/...`)
-            - **PR number**: ${{ steps.pr.outputs.number }}
 
             ## Fix Instructions
 
@@ -129,7 +127,13 @@ jobs:
             - If fixing build errors, run `npm run build` after changes to verify.
             - Keep all three locales in sync (en, zh-Hans, pt-BR).
             - Preserve existing file structure — do not create files that duplicate existing ones.
-            - After making changes, if the PR title or description should be updated to reflect your changes, use `gh pr edit $PR_NUMBER --title "new title" --body "new body"` to update them.
+            - If the PR title or description should be updated, write a file `.pr-update.md` with format:
+              ```
+              title: <new PR title>
+              ---
+              <new PR body in markdown>
+              ```
+              The title line is required. The body after `---` is optional (omit to keep existing body).
 
       - name: Clean up artifacts
         run: rm -rf picoclaw-upstream .codex
@@ -137,7 +141,26 @@ jobs:
       - name: Verify build
         run: npm run build
 
+      - name: Update PR metadata
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          if [ ! -f .pr-update.md ]; then exit 0; fi
+          PR_TITLE=$(head -1 .pr-update.md | sed 's/^title: *//')
+          if [ -n "$PR_TITLE" ]; then
+            gh pr edit "$PR_NUMBER" --title "$PR_TITLE"
+          fi
+          if grep -q '^---$' .pr-update.md; then
+            PR_BODY=$(sed '1,/^---$/d' .pr-update.md)
+            if [ -n "$PR_BODY" ]; then
+              gh pr edit "$PR_NUMBER" --body "$PR_BODY"
+            fi
+          fi
+          rm -f .pr-update.md
+
       - name: Commit and push
+        id: push
         env:
           BRANCH: ${{ steps.pr.outputs.branch }}
         run: |
@@ -146,7 +169,7 @@ jobs:
 
           # Stage any uncommitted changes Codex left in the working tree
           git add -A
-          git reset -- picoclaw-upstream .codex 2>/dev/null || true
+          git reset -- picoclaw-upstream .codex .pr-update.md 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git commit -m "fix: apply requested changes via /fix command
 
@@ -156,8 +179,9 @@ jobs:
           # Push if there are any commits ahead of remote (Codex may have committed directly)
           if [ -n "$(git log "origin/$BRANCH..HEAD" --oneline 2>/dev/null)" ]; then
             git push origin HEAD:"$BRANCH" --force-with-lease
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "No changes to push"
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Comment result
@@ -167,11 +191,14 @@ jobs:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           JOB_STATUS: ${{ job.status }}
+          PUSHED: ${{ steps.push.outputs.pushed }}
         run: |
-          if [ "$JOB_STATUS" = "success" ]; then
+          if [ "$JOB_STATUS" != "success" ]; then
+            BODY="Fix attempt failed. Check the [workflow run]($RUN_URL) for details."
+          elif [ "$PUSHED" = "true" ]; then
             BODY="Fix applied successfully. Please review the new changes."
           else
-            BODY="Fix attempt failed. Check the [workflow run]($RUN_URL) for details."
+            BODY="Codex ran but produced no changes. Check the [workflow run]($RUN_URL) for details."
           fi
           gh pr comment "$PR_NUMBER" --body "$BODY"
 

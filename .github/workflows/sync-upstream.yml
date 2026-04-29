@@ -95,22 +95,15 @@ jobs:
         id: prompt
         env:
           OLD_COMMIT: ${{ steps.detect.outputs.old_commit }}
-          NEW_COMMIT: ${{ steps.detect.outputs.new_commit }}
+          NEW_COMMIT: ${{ steps.detect.outputs.new_commit_full }}
           TARGET_LABEL: ${{ steps.ref.outputs.label }}
           EXTRA_INSTRUCTIONS: ${{ github.event.inputs.extra_instructions }}
           COMMIT_LOG: ${{ steps.detect.outputs.commit_log }}
           CHANGED_FILES: ${{ steps.detect.outputs.changed_files }}
           DIFF_STAT: ${{ steps.detect.outputs.diff_stat }}
         run: |
-          cp .github/prompts/sync-docs.md /tmp/prompt.md
-          for var in OLD_COMMIT NEW_COMMIT TARGET_LABEL EXTRA_INSTRUCTIONS; do
-            sed -i "s|\${${var}}|${!var}|g" /tmp/prompt.md
-          done
-          # Multiline values: use awk to avoid sed delimiter issues
-          awk -v val="$COMMIT_LOG"    '{gsub(/\$\{COMMIT_LOG\}/, val)}1'    /tmp/prompt.md > /tmp/prompt2.md && mv /tmp/prompt2.md /tmp/prompt.md
-          awk -v val="$CHANGED_FILES" '{gsub(/\$\{CHANGED_FILES\}/, val)}1' /tmp/prompt.md > /tmp/prompt2.md && mv /tmp/prompt2.md /tmp/prompt.md
-          awk -v val="$DIFF_STAT"     '{gsub(/\$\{DIFF_STAT\}/, val)}1'     /tmp/prompt.md > /tmp/prompt2.md && mv /tmp/prompt2.md /tmp/prompt.md
-
+          envsubst '$OLD_COMMIT $NEW_COMMIT $TARGET_LABEL $EXTRA_INSTRUCTIONS $COMMIT_LOG $CHANGED_FILES $DIFF_STAT' \
+            < .github/prompts/sync-docs.md > /tmp/prompt.md
           {
             echo "value<<ENDOFPROMPT"
             cat /tmp/prompt.md
@@ -153,10 +146,8 @@ jobs:
           DIFF_CONTENT: ${{ steps.sync_diff.outputs.diff_content }}
           EXTRA_INSTRUCTIONS: ${{ github.event.inputs.extra_instructions }}
         run: |
-          cp .github/prompts/review-sync.md /tmp/review.md
-          sed -i "s|\${EXTRA_INSTRUCTIONS}|${EXTRA_INSTRUCTIONS}|g" /tmp/review.md
-          awk -v val="$DIFF_STAT"    '{gsub(/\$\{DIFF_STAT\}/, val)}1'    /tmp/review.md > /tmp/review2.md && mv /tmp/review2.md /tmp/review.md
-          awk -v val="$DIFF_CONTENT" '{gsub(/\$\{DIFF_CONTENT\}/, val)}1' /tmp/review.md > /tmp/review2.md && mv /tmp/review2.md /tmp/review.md
+          envsubst '$DIFF_STAT $DIFF_CONTENT $EXTRA_INSTRUCTIONS' \
+            < .github/prompts/review-sync.md > /tmp/review.md
           {
             echo "value<<ENDREVIEW"
             cat /tmp/review.md
@@ -176,7 +167,7 @@ jobs:
 
       - name: Clean up artifacts
         if: steps.detect.outputs.has_changes == 'true'
-        run: rm -rf picoclaw-upstream .codex
+        run: rm -rf picoclaw-upstream .codex .pr-update.md
 
       - name: Verify build
         if: steps.detect.outputs.has_changes == 'true'
