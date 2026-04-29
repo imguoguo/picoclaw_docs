@@ -86,6 +86,13 @@ For new channels, providers, or features:
    - Add/update any new doc-to-source mappings
 2. Run `npm ci && npm run build` to verify the build passes.
    - If build fails, fix all errors (broken MDX syntax, missing frontmatter, dead links, sidebar issues).
+3. Write a PR summary file at `.pr-summary.md` (this will be used by the workflow to create the PR). Format:
+   ```
+   title: <concise PR title, e.g. "docs: add WeChat Work channel, update config reference">
+   ---
+   <PR body in markdown — summarize what was added/changed/fixed, organized by section>
+   ```
+   The title line must be the first line. Everything after `---` is the body.
 
 ### Phase 5: Self-Review via Sub-Agent
 

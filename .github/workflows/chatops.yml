@@ -92,6 +92,10 @@ jobs:
 
       - name: Run Codex to fix
         uses: openai/codex-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+          REPO: ${{ github.repository }}
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           responses-api-endpoint: ${{ secrets.OPENAI_BASE_URL }}
@@ -106,6 +110,7 @@ jobs:
             - **Docs repo**: the current working directory (Docusaurus 3.x)
             - **Source repo**: `picoclaw-upstream/` directory (sipeed/picoclaw latest main)
             - Locales: en (`docs/`), zh-Hans (`i18n/zh-Hans/...`), pt-BR (`i18n/pt-BR/...`)
+            - **PR number**: ${{ steps.pr.outputs.number }}
 
             ## Fix Instructions
 
@@ -124,6 +129,7 @@ jobs:
             - If fixing build errors, run `npm run build` after changes to verify.
             - Keep all three locales in sync (en, zh-Hans, pt-BR).
             - Preserve existing file structure — do not create files that duplicate existing ones.
+            - After making changes, if the PR title or description should be updated to reflect your changes, use `gh pr edit $PR_NUMBER --title "new title" --body "new body"` to update them.
 
       - name: Clean up artifacts
         run: rm -rf picoclaw-upstream .codex
