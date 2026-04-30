@@ -68,7 +68,10 @@ const sidebars = {
         'channels/maixcam',
         'channels/vk',
         'channels/weixin',
+        'channels/irc',
+        'channels/pico',
         'channels/teams-webhook',
+        'channels/whatsapp_native',
       ],
     },
     {
